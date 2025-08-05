@@ -12,13 +12,13 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Localizacoes = () => {
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const [localizacoes, setLocalizacoes] = useState(mockLocalizacoes);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [novaLocalizacao, setNovaLocalizacao] = useState('');
   const { toast } = useToast();
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = profile?.role === 'admin';
 
   const handleAddLocalizacao = () => {
     if (novaLocalizacao.trim()) {

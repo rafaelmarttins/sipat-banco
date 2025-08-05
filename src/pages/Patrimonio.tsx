@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Patrimonio = () => {
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const [equipamentos, setEquipamentos] = useState<Equipamento[]>(mockEquipamentos);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSetor, setFilterSetor] = useState('all');
@@ -37,7 +37,7 @@ const Patrimonio = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { toast } = useToast();
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = profile?.role === 'admin';
 
   const setores = [...new Set(equipamentos.map(e => e.setor))];
   const tipos = [...new Set(equipamentos.map(e => e.modelo))];
