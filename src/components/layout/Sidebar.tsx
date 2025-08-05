@@ -148,6 +148,11 @@ const Sidebar = () => {
         </div>
       </nav>
 
+      {/* Seção adicional antes do rodapé */}
+      <div className="px-4 py-2 border-t border-slate-700">
+        {/* Aqui você pode especificar o que quer adicionar */}
+      </div>
+
       {/* Rodapé */}
       <div className="border-t border-slate-700">
         <div className="p-4">
