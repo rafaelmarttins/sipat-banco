@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Settings, Monitor, Computer, Printer, Laptop, Zap, Tablet, Smartphone, Headphones, Router, HardDrive } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Plus, Settings, Monitor, Computer, Printer, Laptop, Zap, Tablet, Smartphone, Headphones, Router, HardDrive, Trash2 } from 'lucide-react';
 import { useTiposEquipamento } from '@/hooks/useTiposEquipamento';
 import { TipoEquipamentoModal } from '@/components/modals/TipoEquipamentoModal';
 import { useAuth } from '@/contexts/AuthContext';
@@ -24,7 +25,7 @@ const iconComponents = {
 
 const Configuracoes = () => {
   const { profile } = useAuth();
-  const { tipos, loading } = useTiposEquipamento();
+  const { tipos, loading, deleteTipo } = useTiposEquipamento();
   const [modalOpen, setModalOpen] = useState(false);
   const isAdmin = profile?.role === 'admin';
 
@@ -83,6 +84,7 @@ const Configuracoes = () => {
                     <TableHead>Nome</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Criado em</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -101,6 +103,29 @@ const Configuracoes = () => {
                         </TableCell>
                         <TableCell>
                           {new Date(tipo.created_at).toLocaleDateString('pt-BR')}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Excluir tipo de equipamento</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Tem certeza que deseja excluir o tipo "{tipo.nome}"? Esta ação não pode ser desfeita.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deleteTipo(tipo.id)}>
+                                  Excluir
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </TableCell>
                       </TableRow>
                     );

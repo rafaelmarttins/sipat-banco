@@ -114,6 +114,31 @@ export const useTiposEquipamento = () => {
     }
   };
 
+  const deleteTipo = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('tipos_equipamento')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Sucesso",
+        description: "Tipo de equipamento excluído com sucesso!",
+      });
+
+      fetchTipos();
+    } catch (error: any) {
+      console.error('Erro ao excluir tipo:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao excluir tipo de equipamento.",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchTipos();
   }, []);
@@ -124,6 +149,7 @@ export const useTiposEquipamento = () => {
     addTipo,
     updateTipo,
     toggleTipo,
+    deleteTipo,
     refetch: fetchTipos
   };
 };
