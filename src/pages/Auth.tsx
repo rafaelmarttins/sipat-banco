@@ -95,7 +95,7 @@ const Auth = () => {
                     <Input
                       id="login-email"
                       type="email"
-                      placeholder="seu.email@chapadao.ms.gov.br"
+                      placeholder="seu.email@exemplo.com"
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
                       required
@@ -155,7 +155,7 @@ const Auth = () => {
                     <Input
                       id="signup-email"
                       type="email"
-                      placeholder="seu.email@chapadao.ms.gov.br"
+                      placeholder="seu.email@exemplo.com"
                       value={signupEmail}
                       onChange={(e) => setSignupEmail(e.target.value)}
                       required
