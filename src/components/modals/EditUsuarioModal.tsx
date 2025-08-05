@@ -8,13 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Usuario } from '@/hooks/useUsuarios';
-import { useLocalizacoes } from '@/hooks/useLocalizacoes';
 
 const editUsuarioSchema = z.object({
   nome: z.string().min(1, 'Nome é obrigatório'),
   email: z.string().email('Email inválido'),
   setor: z.string().min(1, 'Setor é obrigatório'),
-  localizacao_id: z.string().optional(),
+  localizacao: z.string().optional(),
   role: z.enum(['admin', 'user'], {
     required_error: 'Perfil é obrigatório',
   }),
@@ -35,14 +34,13 @@ const EditUsuarioModal: React.FC<EditUsuarioModalProps> = ({
   onOpenChange,
   onSubmit,
 }) => {
-  const { localizacoes } = useLocalizacoes();
   const form = useForm<EditUsuarioFormData>({
     resolver: zodResolver(editUsuarioSchema),
     defaultValues: {
       nome: '',
       email: '',
       setor: '',
-      localizacao_id: '',
+      localizacao: '',
       role: 'user',
     },
   });
@@ -53,7 +51,7 @@ const EditUsuarioModal: React.FC<EditUsuarioModalProps> = ({
         nome: usuario.nome,
         email: usuario.email,
         setor: usuario.setor,
-        localizacao_id: usuario.localizacao_id || '',
+        localizacao: usuario.localizacao || '',
         role: usuario.role,
       });
     }
@@ -66,7 +64,7 @@ const EditUsuarioModal: React.FC<EditUsuarioModalProps> = ({
       nome: data.nome,
       email: data.email,
       setor: data.setor,
-      localizacao_id: data.localizacao_id || null,
+      localizacao: data.localizacao || '',
       role: data.role,
     };
 
@@ -134,25 +132,13 @@ const EditUsuarioModal: React.FC<EditUsuarioModalProps> = ({
 
             <FormField
               control={form.control}
-              name="localizacao_id"
+              name="localizacao"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Localização</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a localização" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="">Nenhuma localização</SelectItem>
-                      {localizacoes.map((localizacao) => (
-                        <SelectItem key={localizacao.id} value={localizacao.id}>
-                          {localizacao.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <Input placeholder="Digite a localização" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

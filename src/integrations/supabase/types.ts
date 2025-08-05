@@ -171,6 +171,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          localizacao: string | null
           localizacao_id: string | null
           nome: string
           password_reset_required: boolean | null
@@ -182,6 +183,7 @@ export type Database = {
           created_at?: string
           email: string
           id: string
+          localizacao?: string | null
           localizacao_id?: string | null
           nome: string
           password_reset_required?: boolean | null
@@ -193,6 +195,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          localizacao?: string | null
           localizacao_id?: string | null
           nome?: string
           password_reset_required?: boolean | null

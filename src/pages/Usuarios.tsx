@@ -13,14 +13,13 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUsuarios, Usuario } from '@/hooks/useUsuarios';
-import { useLocalizacoes } from '@/hooks/useLocalizacoes';
+
 import EditUsuarioModal from '@/components/modals/EditUsuarioModal';
 import { format } from 'date-fns';
 
 const Usuarios = () => {
   const { profile } = useAuth();
   const { usuarios, loading, fetchUsuarios, deleteUsuario, updateUsuario, resetPasswordViaEmail } = useUsuarios();
-  const { localizacoes } = useLocalizacoes();
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
