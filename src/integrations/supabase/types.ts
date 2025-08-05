@@ -171,6 +171,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          localizacao_id: string | null
           nome: string
           password_reset_required: boolean | null
           role: string
@@ -181,6 +182,7 @@ export type Database = {
           created_at?: string
           email: string
           id: string
+          localizacao_id?: string | null
           nome: string
           password_reset_required?: boolean | null
           role?: string
@@ -191,13 +193,22 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          localizacao_id?: string | null
           nome?: string
           password_reset_required?: boolean | null
           role?: string
           setor?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_localizacao_id_fkey"
+            columns: ["localizacao_id"]
+            isOneToOne: false
+            referencedRelation: "localizacoes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tipos_equipamento: {
         Row: {

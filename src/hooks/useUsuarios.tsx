@@ -9,6 +9,7 @@ export interface Usuario {
   email: string;
   role: 'admin' | 'user';
   setor: string;
+  localizacao_id?: string;
   password_reset_required?: boolean;
   created_at: string;
   updated_at: string;

@@ -34,6 +34,7 @@ export interface UserProfile {
   email: string;
   role: 'admin' | 'user';
   setor: string;
+  localizacao_id?: string;
   created_at?: string;
   updated_at?: string;
 }

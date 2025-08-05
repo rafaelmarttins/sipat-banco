@@ -13,12 +13,14 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUsuarios, Usuario } from '@/hooks/useUsuarios';
+import { useLocalizacoes } from '@/hooks/useLocalizacoes';
 import EditUsuarioModal from '@/components/modals/EditUsuarioModal';
 import { format } from 'date-fns';
 
 const Usuarios = () => {
   const { profile } = useAuth();
   const { usuarios, loading, fetchUsuarios, deleteUsuario, updateUsuario, resetPasswordViaEmail } = useUsuarios();
+  const { localizacoes } = useLocalizacoes();
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
@@ -29,6 +31,7 @@ const Usuarios = () => {
     nome: '',
     email: '',
     setor: '',
+    localizacao_id: '',
     role: 'user',
     password: ''
   });
@@ -67,6 +70,7 @@ const Usuarios = () => {
           data: {
             nome: formData.nome,
             setor: formData.setor,
+            localizacao_id: formData.localizacao_id,
             role: formData.role
           }
         }
@@ -77,7 +81,7 @@ const Usuarios = () => {
       }
 
       toast.success("Usuário criado com sucesso! O usuário deve verificar o email para ativar a conta.");
-      setFormData({ nome: '', email: '', setor: '', role: 'user', password: '' });
+      setFormData({ nome: '', email: '', setor: '', localizacao_id: '', role: 'user', password: '' });
       setShowForm(false);
       // Recarregar lista de usuários
       fetchUsuarios();
@@ -228,6 +232,23 @@ const Usuarios = () => {
                       onChange={(e) => setFormData(prev => ({ ...prev, setor: e.target.value }))}
                       required
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="localizacao">Localização</Label>
+                    <Select value={formData.localizacao_id} onValueChange={(value) => setFormData(prev => ({ ...prev, localizacao_id: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a localização" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Nenhuma localização</SelectItem>
+                        {localizacoes.map((localizacao) => (
+                          <SelectItem key={localizacao.id} value={localizacao.id}>
+                            {localizacao.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
