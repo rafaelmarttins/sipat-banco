@@ -3,21 +3,25 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Computer, Monitor, Printer, Calculator, Users, Clock, FileText, Laptop, Zap, Plus, Edit, BarChart3, MapPin } from 'lucide-react';
-import { mockEquipamentos, mockMovimentacoes } from '@/data/mockData';
+import { useEquipamentos } from '@/hooks/useEquipamentos';
+import { useMovimentacoes } from '@/hooks/useMovimentacoes';
 import Layout from '@/components/layout/Layout';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const totalEquipamentos = mockEquipamentos.length;
+  const { equipamentos } = useEquipamentos();
+  const { movimentacoes } = useMovimentacoes();
+  
+  const totalEquipamentos = equipamentos.length;
   const equipamentosPorTipo = {
-    pc: mockEquipamentos.filter(e => e.modelo === 'PC').length,
-    monitor: mockEquipamentos.filter(e => e.modelo === 'Monitor').length,
-    impressora: mockEquipamentos.filter(e => e.modelo === 'Impressora').length,
-    notebook: mockEquipamentos.filter(e => e.modelo === 'Notebook').length,
-    nobreak: mockEquipamentos.filter(e => e.modelo === 'Nobreak').length,
+    pc: equipamentos.filter(e => e.modelo === 'PC').length,
+    monitor: equipamentos.filter(e => e.modelo === 'Monitor').length,
+    impressora: equipamentos.filter(e => e.modelo === 'Impressora').length,
+    notebook: equipamentos.filter(e => e.modelo === 'Notebook').length,
+    nobreak: equipamentos.filter(e => e.modelo === 'Nobreak').length,
   };
 
-  const movimentacoesRecentes = mockMovimentacoes.slice(0, 3);
+  const movimentacoesRecentes = movimentacoes.slice(0, 3);
 
   return (
     <Layout>
@@ -62,7 +66,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-purple-600 mb-1">Movimentações este mês</p>
-                  <p className="text-2xl font-bold text-purple-900">{mockMovimentacoes.length}</p>
+                  <p className="text-2xl font-bold text-purple-900">{movimentacoes.length}</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                   <Clock className="w-6 h-6 text-purple-600" />
@@ -192,13 +196,13 @@ const Dashboard = () => {
                 {movimentacoesRecentes.map((mov) => (
                   <div key={mov.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                     <div>
-                      <p className="font-medium text-sm">{mov.equipamento}</p>
+                      <p className="font-medium text-sm">{mov.equipamento?.modelo} {mov.equipamento?.processado}</p>
                       <p className="text-xs text-slate-500">
-                        {mov.setorOrigem} → {mov.setorDestino}
+                        {mov.localizacao_origem?.nome} → {mov.localizacao_destino?.nome}
                       </p>
                     </div>
                     <span className="text-xs text-slate-400">
-                      {new Date(mov.dataMovimentacao).toLocaleDateString('pt-BR')}
+                      {new Date(mov.data_movimentacao).toLocaleDateString('pt-BR')}
                     </span>
                   </div>
                 ))}

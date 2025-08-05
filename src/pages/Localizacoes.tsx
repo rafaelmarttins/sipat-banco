@@ -6,39 +6,30 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Plus, MapPin, Trash2, Edit } from 'lucide-react';
-import { mockLocalizacoes } from '@/data/mockData';
 import Layout from '@/components/layout/Layout';
-import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLocalizacoes } from '@/hooks/useLocalizacoes';
 
 const Localizacoes = () => {
   const { profile } = useAuth();
-  const [localizacoes, setLocalizacoes] = useState(mockLocalizacoes);
+  const { localizacoes, loading, addLocalizacao, deleteLocalizacao } = useLocalizacoes();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [novaLocalizacao, setNovaLocalizacao] = useState('');
-  const { toast } = useToast();
 
   const isAdmin = profile?.role === 'admin';
 
-  const handleAddLocalizacao = () => {
+  const handleAddLocalizacao = async () => {
     if (novaLocalizacao.trim()) {
-      setLocalizacoes([...localizacoes, novaLocalizacao.trim()]);
-      setNovaLocalizacao('');
-      setIsDialogOpen(false);
-      toast({
-        title: "Localização adicionada",
-        description: "Nova localização foi cadastrada com sucesso.",
-      });
+      const result = await addLocalizacao(novaLocalizacao);
+      if (result.success) {
+        setNovaLocalizacao('');
+        setIsDialogOpen(false);
+      }
     }
   };
 
-  const handleDeleteLocalizacao = (index: number) => {
-    const novasLocalizacoes = localizacoes.filter((_, i) => i !== index);
-    setLocalizacoes(novasLocalizacoes);
-    toast({
-      title: "Localização removida",
-      description: "A localização foi removida com sucesso.",
-    });
+  const handleDeleteLocalizacao = async (id: string) => {
+    await deleteLocalizacao(id);
   };
 
   return (
@@ -92,7 +83,7 @@ const Localizacoes = () => {
           <CardHeader>
             <CardTitle>Localizações Cadastradas</CardTitle>
             <CardDescription>
-              {localizacoes.length} localizações disponíveis
+              {loading ? 'Carregando...' : `${localizacoes.length} localizações disponíveis`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -105,32 +96,46 @@ const Localizacoes = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {localizacoes.map((localizacao, index) => (
-                    <TableRow key={index} className="hover:bg-slate-50">
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="w-4 h-4 text-blue-600" />
-                          <span className="font-medium">{localizacao}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {isAdmin && (
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleDeleteLocalizacao(index)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        )}
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={2} className="text-center py-8 text-slate-500">
+                        Carregando localizações...
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : localizacoes.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={2} className="text-center py-8 text-slate-500">
+                        Nenhuma localização cadastrada
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    localizacoes.map((localizacao) => (
+                      <TableRow key={localizacao.id} className="hover:bg-slate-50">
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <MapPin className="w-4 h-4 text-blue-600" />
+                            <span className="font-medium">{localizacao.nome}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {isAdmin && (
+                            <div className="flex space-x-2">
+                              <Button variant="outline" size="sm">
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleDeleteLocalizacao(localizacao.id)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>

@@ -9,18 +9,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { mockLocalizacoes } from '@/data/mockData';
-import { Equipamento } from '@/types/patrimonio';
+import { useLocalizacoes } from '@/hooks/useLocalizacoes';
+import { useEquipamentos } from '@/hooks/useEquipamentos';
 
 const equipamentoSchema = z.object({
   modelo: z.string().min(1, 'Modelo é obrigatório'),
   processado: z.string().min(1, 'Processador/Descrição é obrigatório'),
   patrimonio: z.string().min(1, 'Número do patrimônio é obrigatório'),
   setor: z.string().min(1, 'Setor é obrigatório'),
-  localizacao: z.string().min(1, 'Localização é obrigatória'),
-  aquisicao: z.string().optional(),
-  estadoConservacao: z.enum(['Conservado', 'Meia-vida', 'Fim-da-vida', 'Novo']),
-  vidaUtil: z.string().optional(),
+  localizacao_id: z.string().min(1, 'Localização é obrigatória'),
+  data_aquisicao: z.string().optional(),
+  estado_conservacao: z.enum(['Conservado', 'Meia-vida', 'Fim-da-vida', 'Novo']),
+  vida_util: z.string().optional(),
   observacoes: z.string().optional(),
 });
 
@@ -29,10 +29,13 @@ type EquipamentoFormData = z.infer<typeof equipamentoSchema>;
 interface EquipamentoFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: Omit<Equipamento, 'id' | 'dataCadastro'>) => void;
+  onSubmit: () => void;
 }
 
 const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, onSubmit }) => {
+  const { localizacoes } = useLocalizacoes();
+  const { addEquipamento } = useEquipamentos();
+  
   const form = useForm<EquipamentoFormData>({
     resolver: zodResolver(equipamentoSchema),
     defaultValues: {
@@ -40,30 +43,34 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
       processado: '',
       patrimonio: '',
       setor: '',
-      localizacao: '',
-      aquisicao: '',
-      estadoConservacao: 'Conservado',
-      vidaUtil: '',
+      localizacao_id: '',
+      data_aquisicao: '',
+      estado_conservacao: 'Conservado',
+      vida_util: '',
       observacoes: '',
     },
   });
 
-  const handleSubmit = (data: EquipamentoFormData) => {
-    const equipamentoData: Omit<Equipamento, 'id' | 'dataCadastro'> = {
+  const handleSubmit = async (data: EquipamentoFormData) => {
+    const equipamentoData = {
       modelo: data.modelo,
       processado: data.processado,
       patrimonio: Number(data.patrimonio),
       setor: data.setor,
-      localizacao: data.localizacao,
-      aquisicao: data.aquisicao,
-      estadoConservacao: data.estadoConservacao,
-      vidaUtil: data.vidaUtil,
-      observacoes: data.observacoes,
-      status: 'Ativo'
+      localizacao_id: data.localizacao_id,
+      data_aquisicao: data.data_aquisicao || undefined,
+      estado_conservacao: data.estado_conservacao,
+      vida_util: data.vida_util || undefined,
+      observacoes: data.observacoes || undefined,
+      status: 'Ativo' as const
     };
-    onSubmit(equipamentoData);
-    form.reset();
-    onOpenChange(false);
+    
+    const result = await addEquipamento(equipamentoData);
+    if (result.success) {
+      form.reset();
+      onOpenChange(false);
+      onSubmit();
+    }
   };
 
   const tiposEquipamento = ['PC', 'Monitor', 'Impressora', 'Nobreak', 'Notebook', 'Tablet'];
@@ -152,7 +159,7 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
 
               <FormField
                 control={form.control}
-                name="localizacao"
+                name="localizacao_id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Localização</FormLabel>
@@ -163,9 +170,9 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {mockLocalizacoes.map((localizacao) => (
-                          <SelectItem key={localizacao} value={localizacao}>
-                            {localizacao}
+                        {localizacoes.map((localizacao) => (
+                          <SelectItem key={localizacao.id} value={localizacao.id}>
+                            {localizacao.nome}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -179,7 +186,7 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="aquisicao"
+                name="data_aquisicao"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Data de Aquisição</FormLabel>
@@ -193,7 +200,7 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
 
               <FormField
                 control={form.control}
-                name="estadoConservacao"
+                name="estado_conservacao"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Estado de Conservação</FormLabel>
@@ -218,7 +225,7 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
 
             <FormField
               control={form.control}
-              name="vidaUtil"
+              name="vida_util"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vida Útil</FormLabel>

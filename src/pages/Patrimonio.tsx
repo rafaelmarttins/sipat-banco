@@ -10,20 +10,18 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Search, Filter, Plus, Computer, Monitor, Printer, CalendarIcon, Eye, Edit, Trash2, Laptop } from 'lucide-react';
-import { mockEquipamentos } from '@/data/mockData';
-import { Equipamento, Movimentacao } from '@/types/patrimonio';
 import Layout from '@/components/layout/Layout';
 import EquipamentoForm from '@/components/forms/EquipamentoForm';
 import EquipamentoDetailsModal from '@/components/modals/EquipamentoDetailsModal';
 import EditEquipamentoModal from '@/components/modals/EditEquipamentoModal';
-import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEquipamentos, Equipamento } from '@/hooks/useEquipamentos';
 
 const Patrimonio = () => {
   const { profile } = useAuth();
-  const [equipamentos, setEquipamentos] = useState<Equipamento[]>(mockEquipamentos);
+  const { equipamentos, loading, toggleStatusEquipamento } = useEquipamentos();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSetor, setFilterSetor] = useState('all');
   const [filterTipo, setFilterTipo] = useState('all');
@@ -35,7 +33,6 @@ const Patrimonio = () => {
   const [selectedEquipamento, setSelectedEquipamento] = useState<Equipamento | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const { toast } = useToast();
 
   const isAdmin = profile?.role === 'admin';
 
@@ -49,71 +46,27 @@ const Patrimonio = () => {
       equipamento.patrimonio.toString().includes(searchTerm);
     
     const matchTipo = filterTipo === 'all' || equipamento.modelo === filterTipo;
-    const matchEstado = filterEstado === 'all' || equipamento.estadoConservacao === filterEstado;
+    const matchEstado = filterEstado === 'all' || equipamento.estado_conservacao === filterEstado;
     const matchStatus = filterStatus === 'all' || equipamento.status === filterStatus;
     
-    const equipamentoDate = new Date(equipamento.dataCadastro);
+    const equipamentoDate = new Date(equipamento.created_at);
     const matchDataInicio = !dataInicio || equipamentoDate >= dataInicio;
     const matchDataFim = !dataFim || equipamentoDate <= dataFim;
 
     return matchSearch && matchTipo && matchEstado && matchStatus && matchDataInicio && matchDataFim;
   });
 
-  const handleAddEquipamento = (equipamentoData: Omit<Equipamento, 'id' | 'dataCadastro'>) => {
-    const newEquipamento: Equipamento = {
-      ...equipamentoData,
-      id: Date.now().toString(),
-      dataCadastro: new Date().toISOString().split('T')[0]
-    };
-    setEquipamentos(prev => [...prev, newEquipamento]);
-    toast({
-      title: "Equipamento cadastrado",
-      description: "O equipamento foi cadastrado com sucesso.",
-    });
+  const handleAddEquipamento = () => {
+    // A lógica de adicionar está no hook useEquipamentos
+    // Este callback é chamado após sucesso para atualizar a UI se necessário
   };
 
-  const handleEditEquipamento = (id: string, updatedData: Partial<Equipamento>) => {
-    const equipamentoAnterior = equipamentos.find(eq => eq.id === id);
-    
-    setEquipamentos(prev => prev.map(eq => eq.id === id ? { ...eq, ...updatedData } : eq));
-    
-    // Se a localização foi alterada, criar uma movimentação
-    if (equipamentoAnterior && updatedData.localizacao && equipamentoAnterior.localizacao !== updatedData.localizacao) {
-      const novaMovimentacao: Movimentacao = {
-        id: Date.now().toString(),
-        equipamentoId: id,
-        equipamento: `${equipamentoAnterior.modelo} ${equipamentoAnterior.processado}`,
-        patrimonio: equipamentoAnterior.patrimonio,
-        setorOrigem: equipamentoAnterior.localizacao,
-        setorDestino: updatedData.localizacao,
-        dataMovimentacao: new Date().toISOString().split('T')[0],
-        responsavel: 'Sistema', // ou pegar do usuário logado
-        motivo: 'Alteração de localização via edição'
-      };
-      
-      // Aqui você adicionaria a movimentação ao estado de movimentações
-      // Por enquanto vou só mostrar no toast que foi criada
-      toast({
-        title: "Equipamento atualizado",
-        description: `As informações do equipamento foram atualizadas e uma movimentação foi registrada.`,
-      });
-    } else {
-      toast({
-        title: "Equipamento atualizado",
-        description: "As informações do equipamento foram atualizadas com sucesso.",
-      });
-    }
+  const handleEditEquipamento = (id: string, updatedData: any) => {
+    // Implementar lógica de edição usando o hook
   };
 
-  const handleDesactivateEquipamento = (id: string) => {
-    setEquipamentos(prev => prev.map(eq => 
-      eq.id === id ? { ...eq, status: eq.status === 'Ativo' ? 'Desativado' : 'Ativo' } : eq
-    ));
-    const equipamento = equipamentos.find(eq => eq.id === id);
-    toast({
-      title: equipamento?.status === 'Ativo' ? "Equipamento desativado" : "Equipamento ativado",
-      description: `O equipamento foi ${equipamento?.status === 'Ativo' ? 'desativado' : 'ativado'} com sucesso.`,
-    });
+  const handleDesactivateEquipamento = async (id: string) => {
+    await toggleStatusEquipamento(id);
   };
 
   const handleClearFilters = () => {
@@ -306,7 +259,7 @@ const Patrimonio = () => {
           <CardHeader>
             <CardTitle>Equipamentos Cadastrados</CardTitle>
             <CardDescription>
-              {filteredEquipamentos.length} equipamentos encontrados
+              {loading ? 'Carregando...' : `${filteredEquipamentos.length} equipamentos encontrados`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -326,77 +279,91 @@ const Patrimonio = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredEquipamentos.map((equipamento) => (
-                    <TableRow key={equipamento.id} className="hover:bg-slate-50">
-                      <TableCell className="font-mono text-blue-600 font-bold">
-                        #{equipamento.patrimonio}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {getIconForType(equipamento.modelo)}
-                          <span className="font-medium">{equipamento.modelo}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{equipamento.processado}</TableCell>
-                      <TableCell>{equipamento.setor}</TableCell>
-                      <TableCell>{equipamento.localizacao}</TableCell>
-                      <TableCell>{getEstadoBadge(equipamento.estadoConservacao)}</TableCell>
-                      <TableCell>{getStatusBadge(equipamento.status)}</TableCell>
-                      <TableCell>{format(new Date(equipamento.dataCadastro), "dd/MM/yyyy")}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleViewEquipamento(equipamento)}
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          {isAdmin && (
-                            <>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => handleEditClick(equipamento)}
-                              >
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    className={equipamento.status === 'Ativo' ? 'hover:bg-red-50' : 'hover:bg-green-50'}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      {equipamento.status === 'Ativo' ? 'Desativar' : 'Ativar'} Equipamento
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Tem certeza que deseja {equipamento.status === 'Ativo' ? 'desativar' : 'ativar'} o equipamento 
-                                      #{equipamento.patrimonio}? {equipamento.status === 'Ativo' 
-                                        ? 'Ele ficará inativo no sistema.' 
-                                        : 'Ele voltará a ficar ativo no sistema.'}
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDesactivateEquipamento(equipamento.id)}>
-                                      {equipamento.status === 'Ativo' ? 'Desativar' : 'Ativar'}
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </>
-                          )}
-                        </div>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-8 text-slate-500">
+                        Carregando equipamentos...
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : filteredEquipamentos.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-8 text-slate-500">
+                        Nenhum equipamento encontrado
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredEquipamentos.map((equipamento) => (
+                      <TableRow key={equipamento.id} className="hover:bg-slate-50">
+                        <TableCell className="font-mono text-blue-600 font-bold">
+                          #{equipamento.patrimonio}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getIconForType(equipamento.modelo)}
+                            <span className="font-medium">{equipamento.modelo}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{equipamento.processado}</TableCell>
+                        <TableCell>{equipamento.setor}</TableCell>
+                        <TableCell>{equipamento.localizacao?.nome || 'N/A'}</TableCell>
+                        <TableCell>{getEstadoBadge(equipamento.estado_conservacao)}</TableCell>
+                        <TableCell>{getStatusBadge(equipamento.status)}</TableCell>
+                        <TableCell>{format(new Date(equipamento.created_at), "dd/MM/yyyy")}</TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleViewEquipamento(equipamento)}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            {isAdmin && (
+                              <>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleEditClick(equipamento)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      className={equipamento.status === 'Ativo' ? 'hover:bg-red-50' : 'hover:bg-green-50'}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        {equipamento.status === 'Ativo' ? 'Desativar' : 'Ativar'} Equipamento
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Tem certeza que deseja {equipamento.status === 'Ativo' ? 'desativar' : 'ativar'} o equipamento 
+                                        #{equipamento.patrimonio}? {equipamento.status === 'Ativo' 
+                                          ? 'Ele ficará inativo no sistema.' 
+                                          : 'Ele voltará a ficar ativo no sistema.'}
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDesactivateEquipamento(equipamento.id)}>
+                                        {equipamento.status === 'Ativo' ? 'Desativar' : 'Ativar'}
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -411,13 +378,13 @@ const Patrimonio = () => {
       />
 
       <EquipamentoDetailsModal
-        equipamento={selectedEquipamento}
+        equipamento={selectedEquipamento as any}
         open={isDetailsModalOpen}
         onOpenChange={setIsDetailsModalOpen}
       />
 
       <EditEquipamentoModal
-        equipamento={selectedEquipamento}
+        equipamento={selectedEquipamento as any}
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         onSubmit={handleEditEquipamento}
