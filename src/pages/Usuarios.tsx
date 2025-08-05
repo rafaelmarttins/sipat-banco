@@ -31,7 +31,8 @@ const Usuarios = () => {
     email: '',
     setor: '',
     localizacao: '',
-    role: 'user'
+    role: 'user',
+    password: ''
   });
 
   // Verificar se o usuário é admin
@@ -59,14 +60,12 @@ const Usuarios = () => {
     setIsCreating(true);
 
     try {
-      // Gerar senha temporária automática
-      const tempPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-      
       // Usar signup normal do Supabase
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
-        password: tempPassword,
+        password: formData.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             nome: formData.nome,
             setor: formData.setor,
@@ -80,18 +79,8 @@ const Usuarios = () => {
         throw authError;
       }
 
-      // Enviar email de reset de senha para o usuário definir sua própria senha
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(formData.email, {
-        redirectTo: `${window.location.origin}/auth?reset=true`
-      });
-
-      if (resetError) {
-        console.warn('Erro ao enviar email de reset:', resetError);
-        // Não falhar a criação do usuário por causa do email
-      }
-
-      toast.success("Usuário criado com sucesso! Um email foi enviado para que ele defina sua senha.");
-      setFormData({ nome: '', email: '', setor: '', localizacao: '', role: 'user' });
+      toast.success("Usuário criado com sucesso! O usuário deve verificar o email para ativar a conta.");
+      setFormData({ nome: '', email: '', setor: '', localizacao: '', role: 'user', password: '' });
       setShowForm(false);
       // Recarregar lista de usuários após um delay para permitir que o trigger processe
       setTimeout(() => {
@@ -270,6 +259,21 @@ const Usuarios = () => {
                     </Select>
                   </div>
 
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="password">Senha Temporária</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Senha temporária para o usuário"
+                      value={formData.password}
+                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                      required
+                      minLength={6}
+                    />
+                    <p className="text-sm text-slate-500">
+                      O usuário deverá verificar o email e poderá alterar a senha depois
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex justify-end gap-3">
@@ -291,9 +295,9 @@ const Usuarios = () => {
                 
                 <div className="text-sm text-slate-500 mt-4 p-3 bg-blue-50 rounded-lg">
                   <p><strong>Como funciona:</strong></p>
-                  <p>• O usuário receberá um email para definir sua própria senha</p>
-                  <p>• Não é necessário inserir senha temporária</p>
-                  <p>• O email já será confirmado automaticamente</p>
+                  <p>• O usuário receberá um email de confirmação para ativar a conta</p>
+                  <p>• Após confirmar o email, ele poderá fazer login com a senha temporária</p>
+                  <p>• Recomende que o usuário altere a senha no perfil após o primeiro login</p>
                 </div>
               </form>
             </CardContent>
