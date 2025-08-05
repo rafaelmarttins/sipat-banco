@@ -146,51 +146,6 @@ export const useUsuarios = () => {
     }
   };
 
-  const setDefaultPassword = async (userId: string, email: string) => {
-    try {
-      if (profile?.role !== 'admin') {
-        throw new Error('Acesso negado. Apenas administradores podem definir senhas padrão.');
-      }
-
-      // Marcar que o usuário precisa trocar a senha
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ password_reset_required: true })
-        .eq('id', userId);
-
-      if (updateError) throw updateError;
-
-      // Enviar email de reset com instrução
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?reset=true&required=true`
-      });
-
-      if (resetError) throw resetError;
-
-      // Atualizar estado local
-      setUsuarios(prev => prev.map(user => 
-        user.id === userId 
-          ? { ...user, password_reset_required: true } 
-          : user
-      ));
-
-      toast({
-        title: "Sucesso",
-        description: "Usuário será obrigado a criar nova senha no próximo login.",
-      });
-      
-      return { success: true };
-    } catch (error: any) {
-      console.error('Erro ao definir senha padrão:', error);
-      toast({
-        title: "Erro",
-        description: error.message || "Não foi possível definir senha padrão.",
-        variant: "destructive",
-      });
-      return { success: false, error: error.message };
-    }
-  };
-
   useEffect(() => {
     if (profile) {
       fetchUsuarios();
@@ -203,7 +158,6 @@ export const useUsuarios = () => {
     fetchUsuarios,
     updateUsuario,
     deleteUsuario,
-    resetPasswordViaEmail,
-    setDefaultPassword
+    resetPasswordViaEmail
   };
 };
