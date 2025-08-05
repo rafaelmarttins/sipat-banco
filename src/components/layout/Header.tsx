@@ -43,12 +43,7 @@ const Header = () => {
                   <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
                     {profile?.nome?.charAt(0)}
                   </div>
-                  <div className="text-left">
-                    <span className="text-sm font-medium text-slate-700 block">{profile?.nome}</span>
-                    <Badge variant={profile?.role === 'admin' ? 'destructive' : 'secondary'} className="text-xs">
-                      {profile?.role === 'admin' ? 'Administrador' : 'Usuário'}
-                    </Badge>
-                  </div>
+                  <span className="text-sm font-medium text-slate-700">{profile?.nome}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
