@@ -13,13 +13,16 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUsuarios } from '@/hooks/useUsuarios';
+import EditUsuarioModal from '@/components/modals/EditUsuarioModal';
 import { format } from 'date-fns';
 
 const Usuarios = () => {
   const { profile } = useAuth();
-  const { usuarios, loading, fetchUsuarios, deleteUsuario } = useUsuarios();
+  const { usuarios, loading, fetchUsuarios, deleteUsuario, updateUsuario } = useUsuarios();
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [formData, setFormData] = useState({
@@ -88,6 +91,20 @@ const Usuarios = () => {
 
   const handleDeleteUser = async (userId: string) => {
     await deleteUsuario(userId);
+  };
+
+  const handleEditUser = (usuario: any) => {
+    setSelectedUsuario(usuario);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateUser = async (id: string, updatedData: any) => {
+    const result = await updateUsuario(id, updatedData);
+    if (result.success) {
+      setIsEditModalOpen(false);
+      setSelectedUsuario(null);
+    }
+    return result;
   };
 
   const getRoleBadge = (role: string) => {
@@ -339,7 +356,11 @@ const Usuarios = () => {
                         <TableCell>{format(new Date(usuario.created_at), "dd/MM/yyyy")}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
-                            <Button variant="outline" size="sm" disabled>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleEditUser(usuario)}
+                            >
                               <Edit className="w-4 h-4" />
                             </Button>
                             {usuario.id !== profile?.id && (
@@ -380,6 +401,13 @@ const Usuarios = () => {
           </CardContent>
         </Card>
       </div>
+
+      <EditUsuarioModal
+        usuario={selectedUsuario}
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        onSubmit={handleUpdateUser}
+      />
     </Layout>
   );
 };
