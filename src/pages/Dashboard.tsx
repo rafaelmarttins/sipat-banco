@@ -5,14 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Computer, Monitor, Printer, Calculator, Users, Clock, FileText, Laptop, Zap, Plus, Edit, BarChart3, MapPin } from 'lucide-react';
 import { useEquipamentos } from '@/hooks/useEquipamentos';
 import { useMovimentacoes } from '@/hooks/useMovimentacoes';
+import { useLocalizacoes } from '@/hooks/useLocalizacoes';
 import Layout from '@/components/layout/Layout';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { equipamentos } = useEquipamentos();
   const { movimentacoes } = useMovimentacoes();
+  const { localizacoes } = useLocalizacoes();
   
   const totalEquipamentos = equipamentos.length;
+  
+  // Calcular setores únicos (localizações cadastradas)
+  const totalSetores = localizacoes.length;
+  
   const equipamentosPorTipo = {
     pc: equipamentos.filter(e => e.modelo === 'PC').length,
     monitor: equipamentos.filter(e => e.modelo === 'Monitor').length,
@@ -20,6 +26,14 @@ const Dashboard = () => {
     notebook: equipamentos.filter(e => e.modelo === 'Notebook').length,
     nobreak: equipamentos.filter(e => e.modelo === 'Nobreak').length,
   };
+
+  // Calcular movimentações deste mês
+  const agora = new Date();
+  const movimentacoesEsteMes = movimentacoes.filter(m => {
+    const dataMovimentacao = new Date(m.data_movimentacao);
+    return dataMovimentacao.getMonth() === agora.getMonth() && 
+           dataMovimentacao.getFullYear() === agora.getFullYear();
+  }).length;
 
   const movimentacoesRecentes = movimentacoes.slice(0, 3);
 
@@ -52,7 +66,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-green-600 mb-1">Setores cadastrados</p>
-                  <p className="text-2xl font-bold text-green-900">8</p>
+                  <p className="text-2xl font-bold text-green-900">{totalSetores}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                   <Users className="w-6 h-6 text-green-600" />
@@ -66,7 +80,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-purple-600 mb-1">Movimentações este mês</p>
-                  <p className="text-2xl font-bold text-purple-900">{movimentacoes.length}</p>
+                  <p className="text-2xl font-bold text-purple-900">{movimentacoesEsteMes}</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                   <Clock className="w-6 h-6 text-purple-600" />
@@ -193,19 +207,23 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {movimentacoesRecentes.map((mov) => (
-                  <div key={mov.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div>
-                      <p className="font-medium text-sm">{mov.equipamento?.modelo} {mov.equipamento?.processado}</p>
-                      <p className="text-xs text-slate-500">
-                        {mov.localizacao_origem?.nome} → {mov.localizacao_destino?.nome}
-                      </p>
+                {movimentacoesRecentes.length === 0 ? (
+                  <p className="text-sm text-slate-500 text-center py-4">Nenhuma movimentação recente</p>
+                ) : (
+                  movimentacoesRecentes.map((mov) => (
+                    <div key={mov.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-sm">{mov.equipamento?.modelo} #{mov.equipamento?.patrimonio}</p>
+                        <p className="text-xs text-slate-500">
+                          {mov.localizacao_origem?.nome} → {mov.localizacao_destino?.nome}
+                        </p>
+                      </div>
+                      <span className="text-xs text-slate-400">
+                        {new Date(mov.data_movimentacao).toLocaleDateString('pt-BR')}
+                      </span>
                     </div>
-                    <span className="text-xs text-slate-400">
-                      {new Date(mov.data_movimentacao).toLocaleDateString('pt-BR')}
-                    </span>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
