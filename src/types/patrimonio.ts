@@ -28,10 +28,12 @@ export interface Movimentacao {
   observacoes?: string;
 }
 
-export interface User {
+export interface UserProfile {
   id: string;
   nome: string;
   email: string;
   role: 'admin' | 'user';
   setor: string;
+  created_at?: string;
+  updated_at?: string;
 }

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Header = () => {
-  const { user } = useAuth();
+  const { profile } = useAuth();
 
   return (
     <header className="bg-white border-b border-slate-200 px-6 py-3">
@@ -34,9 +34,9 @@ const Header = () => {
 
           <div className="flex items-center space-x-2 pl-4 border-l border-slate-200">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-              {user?.nome?.charAt(0)}
+              {profile?.nome?.charAt(0)}
             </div>
-            <span className="text-sm font-medium text-slate-700">{user?.nome}</span>
+            <span className="text-sm font-medium text-slate-700">{profile?.nome}</span>
           </div>
         </div>
       </div>

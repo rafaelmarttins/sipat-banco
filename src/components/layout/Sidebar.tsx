@@ -18,7 +18,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const Sidebar = () => {
   const location = useLocation();
-  const { logout, user } = useAuth();
+  const { logout, profile } = useAuth();
 
   const principalItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -32,7 +32,7 @@ const Sidebar = () => {
   ];
 
   const sistemaItems = [];
-  if (user?.role === 'admin') {
+  if (profile?.role === 'admin') {
     sistemaItems.push(
       { icon: Settings, label: 'Configurações', path: '/configuracoes' },
       { icon: BarChart3, label: 'Estatísticas', path: '/estatisticas' },
@@ -145,7 +145,7 @@ const Sidebar = () => {
       <div className="border-t border-slate-700">
         <div className="p-4">
           <div className="mb-3">
-            <p className="text-sm font-medium">{user?.nome}</p>
+            <p className="text-sm font-medium">{profile?.nome}</p>
           </div>
           <button
             onClick={logout}
