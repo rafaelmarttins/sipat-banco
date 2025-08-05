@@ -7,18 +7,19 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Users, Plus, UserCheck, Shield, Search, Edit, Trash2, Calendar } from 'lucide-react';
+import { Users, Plus, UserCheck, Shield, Search, Edit, Trash2, Calendar, MoreVertical, RotateCcw, Key } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useUsuarios } from '@/hooks/useUsuarios';
+import { useUsuarios, Usuario } from '@/hooks/useUsuarios';
 import EditUsuarioModal from '@/components/modals/EditUsuarioModal';
 import { format } from 'date-fns';
 
 const Usuarios = () => {
   const { profile } = useAuth();
-  const { usuarios, loading, fetchUsuarios, deleteUsuario, updateUsuario } = useUsuarios();
+  const { usuarios, loading, fetchUsuarios, deleteUsuario, updateUsuario, resetPasswordViaEmail, setDefaultPassword } = useUsuarios();
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
@@ -107,10 +108,25 @@ const Usuarios = () => {
     return result;
   };
 
+  const handleResetPassword = async (email: string) => {
+    await resetPasswordViaEmail(email);
+  };
+
+  const handleSetDefaultPassword = async (userId: string, email: string) => {
+    await setDefaultPassword(userId, email);
+  };
+
   const getRoleBadge = (role: string) => {
     return role === 'admin' 
       ? <Badge className="bg-red-600 hover:bg-red-700">Administrador</Badge>
       : <Badge variant="secondary">Usuário</Badge>;
+  };
+
+  const getPasswordStatusBadge = (user: Usuario) => {
+    if (user.password_reset_required) {
+      return <Badge variant="destructive" className="text-xs">Reset Obrigatório</Badge>;
+    }
+    return null;
   };
 
   // Se não for admin, mostrar mensagem de acesso negado
@@ -329,6 +345,7 @@ const Usuarios = () => {
                     <TableHead>Email</TableHead>
                     <TableHead>Setor</TableHead>
                     <TableHead>Perfil</TableHead>
+                    <TableHead>Status da Senha</TableHead>
                     <TableHead>Data de Cadastro</TableHead>
                     <TableHead>Ações</TableHead>
                   </TableRow>
@@ -336,13 +353,13 @@ const Usuarios = () => {
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-slate-500">
+                      <TableCell colSpan={7} className="text-center py-8 text-slate-500">
                         Carregando usuários...
                       </TableCell>
                     </TableRow>
                   ) : filteredUsuarios.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-slate-500">
+                      <TableCell colSpan={7} className="text-center py-8 text-slate-500">
                         Nenhum usuário encontrado
                       </TableCell>
                     </TableRow>
@@ -353,6 +370,7 @@ const Usuarios = () => {
                         <TableCell>{usuario.email}</TableCell>
                         <TableCell>{usuario.setor}</TableCell>
                         <TableCell>{getRoleBadge(usuario.role)}</TableCell>
+                        <TableCell>{getPasswordStatusBadge(usuario)}</TableCell>
                         <TableCell>{format(new Date(usuario.created_at), "dd/MM/yyyy")}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
@@ -363,6 +381,24 @@ const Usuarios = () => {
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
+                            
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <MoreVertical className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleResetPassword(usuario.email)}>
+                                  <RotateCcw className="w-4 h-4 mr-2" />
+                                  Reset via Email
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleSetDefaultPassword(usuario.id, usuario.email)}>
+                                  <Key className="w-4 h-4 mr-2" />
+                                  Forçar Nova Senha
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                             {usuario.id !== profile?.id && (
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>

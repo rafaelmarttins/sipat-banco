@@ -9,6 +9,7 @@ export interface Usuario {
   email: string;
   role: 'admin' | 'user';
   setor: string;
+  password_reset_required?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -116,6 +117,80 @@ export const useUsuarios = () => {
     }
   };
 
+  const resetPasswordViaEmail = async (email: string) => {
+    try {
+      if (profile?.role !== 'admin') {
+        throw new Error('Acesso negado. Apenas administradores podem resetar senhas.');
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?reset=true`
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Sucesso",
+        description: "Email de reset de senha enviado com sucesso.",
+      });
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('Erro ao enviar reset de senha:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Não foi possível enviar o email de reset.",
+        variant: "destructive",
+      });
+      return { success: false, error: error.message };
+    }
+  };
+
+  const setDefaultPassword = async (userId: string, email: string) => {
+    try {
+      if (profile?.role !== 'admin') {
+        throw new Error('Acesso negado. Apenas administradores podem definir senhas padrão.');
+      }
+
+      // Marcar que o usuário precisa trocar a senha
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ password_reset_required: true })
+        .eq('id', userId);
+
+      if (updateError) throw updateError;
+
+      // Enviar email de reset com instrução
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?reset=true&required=true`
+      });
+
+      if (resetError) throw resetError;
+
+      // Atualizar estado local
+      setUsuarios(prev => prev.map(user => 
+        user.id === userId 
+          ? { ...user, password_reset_required: true } 
+          : user
+      ));
+
+      toast({
+        title: "Sucesso",
+        description: "Usuário será obrigado a criar nova senha no próximo login.",
+      });
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('Erro ao definir senha padrão:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Não foi possível definir senha padrão.",
+        variant: "destructive",
+      });
+      return { success: false, error: error.message };
+    }
+  };
+
   useEffect(() => {
     if (profile) {
       fetchUsuarios();
@@ -127,6 +202,8 @@ export const useUsuarios = () => {
     loading,
     fetchUsuarios,
     updateUsuario,
-    deleteUsuario
+    deleteUsuario,
+    resetPasswordViaEmail,
+    setDefaultPassword
   };
 };

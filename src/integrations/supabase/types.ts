@@ -172,6 +172,7 @@ export type Database = {
           email: string
           id: string
           nome: string
+          password_reset_required: boolean | null
           role: string
           setor: string
           updated_at: string
@@ -181,6 +182,7 @@ export type Database = {
           email: string
           id: string
           nome: string
+          password_reset_required?: boolean | null
           role?: string
           setor?: string
           updated_at?: string
@@ -190,6 +192,7 @@ export type Database = {
           email?: string
           id?: string
           nome?: string
+          password_reset_required?: boolean | null
           role?: string
           setor?: string
           updated_at?: string
