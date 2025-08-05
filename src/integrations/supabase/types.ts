@@ -14,6 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
+      equipamentos: {
+        Row: {
+          created_at: string
+          data_aquisicao: string | null
+          estado_conservacao: string
+          id: string
+          localizacao_id: string
+          modelo: string
+          observacoes: string | null
+          patrimonio: number
+          processado: string
+          setor: string
+          status: string
+          updated_at: string
+          user_id: string
+          vida_util: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_aquisicao?: string | null
+          estado_conservacao?: string
+          id?: string
+          localizacao_id: string
+          modelo: string
+          observacoes?: string | null
+          patrimonio: number
+          processado: string
+          setor: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          vida_util?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_aquisicao?: string | null
+          estado_conservacao?: string
+          id?: string
+          localizacao_id?: string
+          modelo?: string
+          observacoes?: string | null
+          patrimonio?: number
+          processado?: string
+          setor?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          vida_util?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipamentos_localizacao_id_fkey"
+            columns: ["localizacao_id"]
+            isOneToOne: false
+            referencedRelation: "localizacoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipamentos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      localizacoes: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      movimentacoes: {
+        Row: {
+          created_at: string
+          data_movimentacao: string
+          equipamento_id: string
+          id: string
+          localizacao_destino_id: string
+          localizacao_origem_id: string
+          motivo: string
+          observacoes: string | null
+          responsavel_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_movimentacao?: string
+          equipamento_id: string
+          id?: string
+          localizacao_destino_id: string
+          localizacao_origem_id: string
+          motivo: string
+          observacoes?: string | null
+          responsavel_id: string
+        }
+        Update: {
+          created_at?: string
+          data_movimentacao?: string
+          equipamento_id?: string
+          id?: string
+          localizacao_destino_id?: string
+          localizacao_origem_id?: string
+          motivo?: string
+          observacoes?: string | null
+          responsavel_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "movimentacoes_equipamento_id_fkey"
+            columns: ["equipamento_id"]
+            isOneToOne: false
+            referencedRelation: "equipamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_localizacao_destino_id_fkey"
+            columns: ["localizacao_destino_id"]
+            isOneToOne: false
+            referencedRelation: "localizacoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_localizacao_origem_id_fkey"
+            columns: ["localizacao_origem_id"]
+            isOneToOne: false
+            referencedRelation: "localizacoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
