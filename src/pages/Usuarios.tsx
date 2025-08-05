@@ -5,13 +5,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Users, Plus, UserCheck, Shield } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Users, Plus, UserCheck, Shield, Search, Edit, Trash2, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useUsuarios } from '@/hooks/useUsuarios';
+import { format } from 'date-fns';
 
 const Usuarios = () => {
+  const { profile } = useAuth();
+  const { usuarios, loading, fetchUsuarios, deleteUsuario } = useUsuarios();
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRole, setFilterRole] = useState('all');
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
@@ -19,6 +29,26 @@ const Usuarios = () => {
     role: 'user',
     password: ''
   });
+
+  // Verificar se o usuário é admin
+  const isAdmin = profile?.role === 'admin';
+
+  // Filtrar usuários
+  const filteredUsuarios = usuarios.filter(usuario => {
+    const matchSearch = searchTerm === '' || 
+      usuario.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      usuario.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      usuario.setor.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchRole = filterRole === 'all' || usuario.role === filterRole;
+    
+    return matchSearch && matchRole;
+  });
+
+  // Calcular estatísticas
+  const totalUsuarios = usuarios.length;
+  const adminCount = usuarios.filter(u => u.role === 'admin').length;
+  const userCount = usuarios.filter(u => u.role === 'user').length;
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +76,8 @@ const Usuarios = () => {
       toast.success("Usuário criado com sucesso! O usuário deve verificar o email para ativar a conta.");
       setFormData({ nome: '', email: '', setor: '', role: 'user', password: '' });
       setShowForm(false);
+      // Recarregar lista de usuários
+      fetchUsuarios();
     } catch (error: any) {
       console.error('Erro ao criar usuário:', error);
       toast.error(error.message || "Erro ao criar usuário");
@@ -53,6 +85,35 @@ const Usuarios = () => {
       setIsCreating(false);
     }
   };
+
+  const handleDeleteUser = async (userId: string) => {
+    await deleteUsuario(userId);
+  };
+
+  const getRoleBadge = (role: string) => {
+    return role === 'admin' 
+      ? <Badge className="bg-red-600 hover:bg-red-700">Administrador</Badge>
+      : <Badge variant="secondary">Usuário</Badge>;
+  };
+
+  // Se não for admin, mostrar mensagem de acesso negado
+  if (!isAdmin) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Card className="w-full max-w-md">
+            <CardContent className="pt-6 text-center">
+              <Shield className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-slate-800 mb-2">Acesso Restrito</h2>
+              <p className="text-slate-600">
+                Apenas administradores podem acessar o gerenciamento de usuários.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -70,6 +131,36 @@ const Usuarios = () => {
             Novo Usuário
           </Button>
         </div>
+
+        {/* Filtros de Busca */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Buscar Usuários</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Input
+                  placeholder="Buscar por nome, email ou setor..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={filterRole} onValueChange={setFilterRole}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Filtrar por perfil" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os Perfis</SelectItem>
+                  <SelectItem value="admin">Administradores</SelectItem>
+                  <SelectItem value="user">Usuários</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
 
         {showForm && (
           <Card>
@@ -176,8 +267,8 @@ const Usuarios = () => {
               <Users className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1</div>
-              <p className="text-xs text-slate-500">Administrador principal</p>
+              <div className="text-2xl font-bold">{totalUsuarios}</div>
+              <p className="text-xs text-slate-500">Total no sistema</p>
             </CardContent>
           </Card>
 
@@ -187,22 +278,107 @@ const Usuarios = () => {
               <Shield className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1</div>
+              <div className="text-2xl font-bold">{adminCount}</div>
               <p className="text-xs text-slate-500">Com acesso total</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Usuários Ativos</CardTitle>
+              <CardTitle className="text-sm font-medium">Usuários Comuns</CardTitle>
               <UserCheck className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1</div>
-              <p className="text-xs text-slate-500">Últimos 30 dias</p>
+              <div className="text-2xl font-bold">{userCount}</div>
+              <p className="text-xs text-slate-500">Acesso limitado</p>
             </CardContent>
           </Card>
         </div>
+
+        {/* Tabela de Usuários */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Usuários Cadastrados</CardTitle>
+            <CardContent className="text-sm text-slate-600">
+              {loading ? 'Carregando...' : `${filteredUsuarios.length} usuários encontrados`}
+            </CardContent>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Setor</TableHead>
+                    <TableHead>Perfil</TableHead>
+                    <TableHead>Data de Cadastro</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-slate-500">
+                        Carregando usuários...
+                      </TableCell>
+                    </TableRow>
+                  ) : filteredUsuarios.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-slate-500">
+                        Nenhum usuário encontrado
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredUsuarios.map((usuario) => (
+                      <TableRow key={usuario.id} className="hover:bg-slate-50">
+                        <TableCell className="font-medium">{usuario.nome}</TableCell>
+                        <TableCell>{usuario.email}</TableCell>
+                        <TableCell>{usuario.setor}</TableCell>
+                        <TableCell>{getRoleBadge(usuario.role)}</TableCell>
+                        <TableCell>{format(new Date(usuario.created_at), "dd/MM/yyyy")}</TableCell>
+                        <TableCell>
+                          <div className="flex space-x-2">
+                            <Button variant="outline" size="sm" disabled>
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            {usuario.id !== profile?.id && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="outline" size="sm" className="hover:bg-red-50">
+                                    <Trash2 className="w-4 h-4 text-red-600" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Excluir Usuário</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Tem certeza que deseja excluir o usuário "{usuario.nome}"? 
+                                      Esta ação não pode ser desfeita.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                      onClick={() => handleDeleteUser(usuario.id)}
+                                      className="bg-red-600 hover:bg-red-700"
+                                    >
+                                      Excluir
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );

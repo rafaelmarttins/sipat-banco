@@ -1,0 +1,132 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+
+export interface Usuario {
+  id: string;
+  nome: string;
+  email: string;
+  role: 'admin' | 'user';
+  setor: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const useUsuarios = () => {
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { profile } = useAuth();
+  const { toast } = useToast();
+
+  const fetchUsuarios = async () => {
+    try {
+      setLoading(true);
+      
+      // Apenas admins podem ver a lista de usuários
+      if (profile?.role !== 'admin') {
+        setUsuarios([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setUsuarios(data as Usuario[] || []);
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os usuários.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateUsuario = async (id: string, updates: Partial<Usuario>) => {
+    try {
+      if (profile?.role !== 'admin') {
+        throw new Error('Acesso negado. Apenas administradores podem editar usuários.');
+      }
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setUsuarios(prev => prev.map(user => user.id === id ? data as Usuario : user));
+      toast({
+        title: "Sucesso",
+        description: "Usuário atualizado com sucesso.",
+      });
+      
+      return { success: true, data };
+    } catch (error: any) {
+      console.error('Erro ao atualizar usuário:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Não foi possível atualizar o usuário.",
+        variant: "destructive",
+      });
+      return { success: false, error: error.message };
+    }
+  };
+
+  const deleteUsuario = async (id: string) => {
+    try {
+      if (profile?.role !== 'admin') {
+        throw new Error('Acesso negado. Apenas administradores podem excluir usuários.');
+      }
+
+      if (id === profile.id) {
+        throw new Error('Você não pode excluir sua própria conta.');
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setUsuarios(prev => prev.filter(user => user.id !== id));
+      toast({
+        title: "Sucesso",
+        description: "Usuário removido com sucesso.",
+      });
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('Erro ao remover usuário:', error);
+      toast({
+        title: "Erro",
+        description: error.message || "Não foi possível remover o usuário.",
+        variant: "destructive",
+      });
+      return { success: false, error: error.message };
+    }
+  };
+
+  useEffect(() => {
+    if (profile) {
+      fetchUsuarios();
+    }
+  }, [profile]);
+
+  return {
+    usuarios,
+    loading,
+    fetchUsuarios,
+    updateUsuario,
+    deleteUsuario
+  };
+};
