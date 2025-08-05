@@ -6,20 +6,36 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowRightLeft, Plus, Calendar, User } from 'lucide-react';
-import { mockMovimentacoes } from '@/data/mockData';
 import Layout from '@/components/layout/Layout';
+import { useMovimentacoes } from '@/hooks/useMovimentacoes';
+import { format } from 'date-fns';
 
 const Movimentacoes = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { movimentacoes, loading } = useMovimentacoes();
 
-  const filteredMovimentacoes = mockMovimentacoes.filter(movimentacao =>
+  const filteredMovimentacoes = movimentacoes.filter(movimentacao =>
     searchTerm === '' ||
-    movimentacao.equipamento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    movimentacao.patrimonio.toString().includes(searchTerm) ||
-    movimentacao.setorOrigem.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    movimentacao.setorDestino.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    movimentacao.responsavel.toLowerCase().includes(searchTerm.toLowerCase())
+    (movimentacao.equipamento?.modelo || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (movimentacao.equipamento?.patrimonio?.toString() || '').includes(searchTerm) ||
+    (movimentacao.localizacao_origem?.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (movimentacao.localizacao_destino?.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (movimentacao.responsavel?.nome || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Calcular estatísticas
+  const totalMovimentacoes = movimentacoes.length;
+  const movimentacoesEsteMes = movimentacoes.filter(m => {
+    const dataMovimentacao = new Date(m.data_movimentacao);
+    const agora = new Date();
+    return dataMovimentacao.getMonth() === agora.getMonth() && 
+           dataMovimentacao.getFullYear() === agora.getFullYear();
+  }).length;
+  
+  const setoresUnicos = new Set([
+    ...movimentacoes.map(m => m.localizacao_origem?.nome).filter(Boolean),
+    ...movimentacoes.map(m => m.localizacao_destino?.nome).filter(Boolean)
+  ]).size;
 
   return (
     <Layout>
@@ -38,7 +54,7 @@ const Movimentacoes = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-600">Total de Movimentações</p>
-                <p className="text-2xl font-bold text-slate-800">{mockMovimentacoes.length}</p>
+                <p className="text-2xl font-bold text-slate-800">{totalMovimentacoes}</p>
               </div>
             </CardContent>
           </Card>
@@ -50,7 +66,7 @@ const Movimentacoes = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-600">Este Mês</p>
-                <p className="text-2xl font-bold text-slate-800">3</p>
+                <p className="text-2xl font-bold text-slate-800">{movimentacoesEsteMes}</p>
               </div>
             </CardContent>
           </Card>
@@ -62,7 +78,7 @@ const Movimentacoes = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-600">Setores Envolvidos</p>
-                <p className="text-2xl font-bold text-slate-800">5</p>
+                <p className="text-2xl font-bold text-slate-800">{setoresUnicos}</p>
               </div>
             </CardContent>
           </Card>
@@ -94,7 +110,7 @@ const Movimentacoes = () => {
           <CardHeader>
             <CardTitle>Histórico de Movimentações</CardTitle>
             <CardDescription>
-              {filteredMovimentacoes.length} movimentações encontradas
+              {loading ? 'Carregando...' : `${filteredMovimentacoes.length} movimentações encontradas`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -112,31 +128,45 @@ const Movimentacoes = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredMovimentacoes.map((movimentacao) => (
-                    <TableRow key={movimentacao.id} className="hover:bg-slate-50">
-                      <TableCell className="font-medium">
-                        {new Date(movimentacao.dataMovimentacao).toLocaleDateString('pt-BR')}
-                      </TableCell>
-                      <TableCell>{movimentacao.equipamento}</TableCell>
-                      <TableCell className="font-mono text-blue-600">
-                        #{movimentacao.patrimonio}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-red-600 border-red-600">
-                          {movimentacao.setorOrigem}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className="bg-green-600 hover:bg-green-700">
-                          {movimentacao.setorDestino}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{movimentacao.responsavel}</TableCell>
-                      <TableCell className="max-w-xs truncate">
-                        {movimentacao.motivo}
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-slate-500">
+                        Carregando movimentações...
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : filteredMovimentacoes.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-slate-500">
+                        Nenhuma movimentação encontrada
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredMovimentacoes.map((movimentacao) => (
+                      <TableRow key={movimentacao.id} className="hover:bg-slate-50">
+                        <TableCell className="font-medium">
+                          {format(new Date(movimentacao.data_movimentacao), "dd/MM/yyyy HH:mm")}
+                        </TableCell>
+                        <TableCell>{movimentacao.equipamento?.modelo || 'N/A'}</TableCell>
+                        <TableCell className="font-mono text-blue-600">
+                          #{movimentacao.equipamento?.patrimonio || 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-red-600 border-red-600">
+                            {movimentacao.localizacao_origem?.nome || 'N/A'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className="bg-green-600 hover:bg-green-700">
+                            {movimentacao.localizacao_destino?.nome || 'N/A'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{movimentacao.responsavel?.nome || 'N/A'}</TableCell>
+                        <TableCell className="max-w-xs truncate">
+                          {movimentacao.motivo}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
