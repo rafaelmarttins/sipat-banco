@@ -31,7 +31,7 @@ const Usuarios = () => {
     nome: '',
     email: '',
     setor: '',
-    localizacao_id: '',
+    localizacao: '',
     role: 'user',
     password: ''
   });
@@ -70,7 +70,7 @@ const Usuarios = () => {
           data: {
             nome: formData.nome,
             setor: formData.setor,
-            localizacao_id: formData.localizacao_id,
+            localizacao: formData.localizacao,
             role: formData.role
           }
         }
@@ -81,10 +81,12 @@ const Usuarios = () => {
       }
 
       toast.success("Usuário criado com sucesso! O usuário deve verificar o email para ativar a conta.");
-      setFormData({ nome: '', email: '', setor: '', localizacao_id: '', role: 'user', password: '' });
+      setFormData({ nome: '', email: '', setor: '', localizacao: '', role: 'user', password: '' });
       setShowForm(false);
-      // Recarregar lista de usuários
-      fetchUsuarios();
+      // Recarregar lista de usuários após um delay para permitir que o trigger processe
+      setTimeout(() => {
+        fetchUsuarios();
+      }, 1000);
     } catch (error: any) {
       console.error('Erro ao criar usuário:', error);
       toast.error(error.message || "Erro ao criar usuário");
@@ -236,19 +238,13 @@ const Usuarios = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="localizacao">Localização</Label>
-                    <Select value={formData.localizacao_id} onValueChange={(value) => setFormData(prev => ({ ...prev, localizacao_id: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a localização" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Nenhuma localização</SelectItem>
-                        {localizacoes.map((localizacao) => (
-                          <SelectItem key={localizacao.id} value={localizacao.id}>
-                            {localizacao.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      id="localizacao"
+                      type="text"
+                      placeholder="Digite a localização"
+                      value={formData.localizacao}
+                      onChange={(e) => setFormData(prev => ({ ...prev, localizacao: e.target.value }))}
+                    />
                   </div>
 
                   <div className="space-y-2">
