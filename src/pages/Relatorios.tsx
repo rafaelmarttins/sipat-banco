@@ -37,9 +37,9 @@ const Relatorios = () => {
   const [formato, setFormato] = useState('pdf');
   const [dataInicio, setDataInicio] = useState<Date>();
   const [dataFim, setDataFim] = useState<Date>();
-  const [filtroSetor, setFiltroSetor] = useState('');
-  const [filtroStatus, setFiltroStatus] = useState('');
-  const [filtroLocalizacao, setFiltroLocalizacao] = useState('');
+  const [filtroSetor, setFiltroSetor] = useState('all');
+  const [filtroStatus, setFiltroStatus] = useState('all');
+  const [filtroLocalizacao, setFiltroLocalizacao] = useState('all');
   const [gerando, setGerando] = useState(false);
 
   // Obter setores únicos dos equipamentos
@@ -52,9 +52,9 @@ const Relatorios = () => {
       const filtros = {
         dataInicio,
         dataFim,
-        setor: filtroSetor || undefined,
-        status: filtroStatus || undefined,
-        localizacao: filtroLocalizacao || undefined
+        setor: filtroSetor !== 'all' ? filtroSetor : undefined,
+        status: filtroStatus !== 'all' ? filtroStatus : undefined,
+        localizacao: filtroLocalizacao !== 'all' ? filtroLocalizacao : undefined
       };
 
       // Filtrar dados baseado nos critérios
@@ -63,9 +63,9 @@ const Relatorios = () => {
       switch (tipoRelatorio) {
         case 'equipamentos':
           dadosFiltrados = equipamentos.filter(eq => {
-            const matchSetor = !filtroSetor || eq.setor === filtroSetor;
-            const matchStatus = !filtroStatus || eq.status === filtroStatus;
-            const matchLocalizacao = !filtroLocalizacao || eq.localizacao_id === filtroLocalizacao;
+            const matchSetor = filtroSetor === 'all' || eq.setor === filtroSetor;
+            const matchStatus = filtroStatus === 'all' || eq.status === filtroStatus;
+            const matchLocalizacao = filtroLocalizacao === 'all' || eq.localizacao_id === filtroLocalizacao;
             const matchDataInicio = !dataInicio || new Date(eq.created_at) >= dataInicio;
             const matchDataFim = !dataFim || new Date(eq.created_at) <= dataFim;
             
@@ -96,7 +96,7 @@ const Relatorios = () => {
           
         case 'usuarios':
           dadosFiltrados = usuarios.filter(user => {
-            const matchSetor = !filtroSetor || user.setor === filtroSetor;
+            const matchSetor = filtroSetor === 'all' || user.setor === filtroSetor;
             return matchSetor;
           });
           
@@ -314,7 +314,7 @@ const Relatorios = () => {
                         <SelectValue placeholder="Todos os setores" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Todos os setores</SelectItem>
+                        <SelectItem value="all">Todos os setores</SelectItem>
                         {setoresUnicos.map(setor => (
                           <SelectItem key={setor} value={setor}>{setor}</SelectItem>
                         ))}
@@ -332,7 +332,7 @@ const Relatorios = () => {
                           <SelectValue placeholder="Todos os status" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Todos os status</SelectItem>
+                          <SelectItem value="all">Todos os status</SelectItem>
                           <SelectItem value="Ativo">Ativo</SelectItem>
                           <SelectItem value="Desativado">Desativado</SelectItem>
                         </SelectContent>
