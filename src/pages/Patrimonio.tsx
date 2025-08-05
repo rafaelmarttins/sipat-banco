@@ -21,7 +21,7 @@ import { useEquipamentos, Equipamento } from '@/hooks/useEquipamentos';
 
 const Patrimonio = () => {
   const { profile } = useAuth();
-  const { equipamentos, loading, toggleStatusEquipamento } = useEquipamentos();
+  const { equipamentos, loading, toggleStatusEquipamento, updateEquipamento } = useEquipamentos();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSetor, setFilterSetor] = useState('all');
   const [filterTipo, setFilterTipo] = useState('all');
@@ -57,12 +57,13 @@ const Patrimonio = () => {
   });
 
   const handleAddEquipamento = () => {
-    // A lógica de adicionar está no hook useEquipamentos
-    // Este callback é chamado após sucesso para atualizar a UI se necessário
+    // Recarrega a lista após adicionar equipamento
+    setIsFormOpen(false);
   };
 
-  const handleEditEquipamento = (id: string, updatedData: any) => {
-    // Implementar lógica de edição usando o hook
+  const handleEditEquipamento = async (id: string, updatedData: any) => {
+    await updateEquipamento(id, updatedData);
+    setIsEditModalOpen(false);
   };
 
   const handleDesactivateEquipamento = async (id: string) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Equipamento } from '@/types/patrimonio';
+import { Equipamento } from '@/hooks/useEquipamentos';
 import { format } from 'date-fns';
 
 interface EquipamentoDetailsModalProps {
@@ -67,7 +67,7 @@ const EquipamentoDetailsModal: React.FC<EquipamentoDetailsModalProps> = ({
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">Estado de Conservação</label>
-              <div className="mt-1">{getEstadoBadge(equipamento.estadoConservacao)}</div>
+              <div className="mt-1">{getEstadoBadge(equipamento.estado_conservacao)}</div>
             </div>
           </div>
 
@@ -83,27 +83,27 @@ const EquipamentoDetailsModal: React.FC<EquipamentoDetailsModalProps> = ({
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">Localização</label>
-              <p className="text-sm">{equipamento.localizacao}</p>
+              <p className="text-sm">{equipamento.localizacao?.nome || 'N/A'}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-500">Data de Cadastro</label>
-              <p className="text-sm">{format(new Date(equipamento.dataCadastro), "dd/MM/yyyy")}</p>
+              <p className="text-sm">{format(new Date(equipamento.created_at), "dd/MM/yyyy")}</p>
             </div>
-            {equipamento.aquisicao && (
+            {equipamento.data_aquisicao && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Data de Aquisição</label>
-                <p className="text-sm">{format(new Date(equipamento.aquisicao), "dd/MM/yyyy")}</p>
+                <p className="text-sm">{format(new Date(equipamento.data_aquisicao), "dd/MM/yyyy")}</p>
               </div>
             )}
           </div>
 
-          {equipamento.vidaUtil && (
+          {equipamento.vida_util && (
             <div>
               <label className="text-sm font-medium text-gray-500">Vida Útil</label>
-              <p className="text-sm">{equipamento.vidaUtil}</p>
+              <p className="text-sm">{equipamento.vida_util}</p>
             </div>
           )}
 

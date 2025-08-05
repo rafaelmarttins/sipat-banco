@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { mockLocalizacoes } from '@/data/mockData';
-import { Equipamento } from '@/types/patrimonio';
+import { Equipamento } from '@/hooks/useEquipamentos';
+import { useLocalizacoes } from '@/hooks/useLocalizacoes';
 
 const editEquipamentoSchema = z.object({
   modelo: z.string().min(1, 'Modelo é obrigatório'),
@@ -39,6 +39,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
   onOpenChange,
   onSubmit,
 }) => {
+  const { localizacoes } = useLocalizacoes();
   const form = useForm<EditEquipamentoFormData>({
     resolver: zodResolver(editEquipamentoSchema),
     defaultValues: {
@@ -62,10 +63,10 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
         processado: equipamento.processado,
         patrimonio: equipamento.patrimonio.toString(),
         setor: equipamento.setor,
-        localizacao: equipamento.localizacao,
-        aquisicao: equipamento.aquisicao || '',
-        estadoConservacao: equipamento.estadoConservacao,
-        vidaUtil: equipamento.vidaUtil || '',
+        localizacao: equipamento.localizacao_id,
+        aquisicao: equipamento.data_aquisicao || '',
+        estadoConservacao: equipamento.estado_conservacao,
+        vidaUtil: equipamento.vida_util || '',
         observacoes: equipamento.observacoes || '',
         status: equipamento.status,
       });
@@ -80,10 +81,10 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
       processado: data.processado,
       patrimonio: Number(data.patrimonio),
       setor: data.setor,
-      localizacao: data.localizacao,
-      aquisicao: data.aquisicao,
-      estadoConservacao: data.estadoConservacao,
-      vidaUtil: data.vidaUtil,
+      localizacao_id: data.localizacao,
+      data_aquisicao: data.aquisicao,
+      estado_conservacao: data.estadoConservacao,
+      vida_util: data.vidaUtil,
       observacoes: data.observacoes,
       status: data.status,
     };
@@ -191,9 +192,9 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {mockLocalizacoes.map((localizacao) => (
-                          <SelectItem key={localizacao} value={localizacao}>
-                            {localizacao}
+                        {localizacoes.map((localizacao) => (
+                          <SelectItem key={localizacao.id} value={localizacao.id}>
+                            {localizacao.nome}
                           </SelectItem>
                         ))}
                       </SelectContent>
