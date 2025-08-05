@@ -1,42 +1,121 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Settings, Clock } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Plus, Settings, Monitor, Computer, Printer, Laptop, Zap, Tablet, Smartphone, Headphones, Router, HardDrive } from 'lucide-react';
+import { useTiposEquipamento } from '@/hooks/useTiposEquipamento';
+import { TipoEquipamentoModal } from '@/components/modals/TipoEquipamentoModal';
+import { useAuth } from '@/contexts/AuthContext';
+
+const iconComponents = {
+  Computer,
+  Monitor,
+  Printer,
+  Laptop,
+  Zap,
+  Tablet,
+  Smartphone,
+  Headphones,
+  Router,
+  HardDrive,
+} as const;
 
 const Configuracoes = () => {
+  const { profile } = useAuth();
+  const { tipos, loading } = useTiposEquipamento();
+  const [modalOpen, setModalOpen] = useState(false);
+  const isAdmin = profile?.role === 'admin';
+
+  const getIconComponent = (iconeName?: string) => {
+    if (!iconeName || !(iconeName in iconComponents)) {
+      return Settings;
+    }
+    return iconComponents[iconeName as keyof typeof iconComponents];
+  };
+
+  const handleModalSubmit = () => {
+    // Refresh será feito automaticamente pelo hook
+  };
+
+  if (!isAdmin) {
+    return (
+      <Layout>
+        <div className="p-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Configurações</h1>
+          <p className="text-gray-600">Você não tem permissão para acessar esta página.</p>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
-      <div className="space-y-6">
-        <div className="text-center py-16">
-          <div className="flex justify-center mb-6">
-            <div className="rounded-full p-4 bg-slate-100">
-              <Settings className="w-12 h-12 text-slate-400" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold text-slate-800 mb-4">Configurações do Sistema</h1>
-          <p className="text-lg text-slate-600 mb-6">
-            Este módulo está em desenvolvimento e estará disponível em breve.
-          </p>
-          <Card className="max-w-md mx-auto">
-            <CardHeader className="text-center">
-              <CardTitle className="flex items-center justify-center gap-2 text-amber-600">
-                <Clock className="w-5 h-5" />
-                Em Breve
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-slate-600">
-                Funcionalidades que estarão disponíveis:
-              </p>
-              <ul className="mt-4 text-sm text-slate-500 space-y-1">
-                <li>• Configurações gerais</li>
-                <li>• Gerenciamento de usuários</li>
-                <li>• Perfis de acesso</li>
-                <li>• Backup e restauração</li>
-              </ul>
-            </CardContent>
-          </Card>
+      <div className="p-6 space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-900">Configurações</h1>
         </div>
+
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Tipos de Equipamento</CardTitle>
+                <CardDescription>
+                  Gerencie os tipos de equipamento disponíveis no sistema
+                </CardDescription>
+              </div>
+              <Button onClick={() => setModalOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Novo Tipo
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p>Carregando tipos...</p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Ícone</TableHead>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Criado em</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tipos.map((tipo) => {
+                    const IconComponent = getIconComponent(tipo.icone);
+                    return (
+                      <TableRow key={tipo.id}>
+                        <TableCell>
+                          <IconComponent className="w-5 h-5" />
+                        </TableCell>
+                        <TableCell className="font-medium">{tipo.nome}</TableCell>
+                        <TableCell>
+                          <Badge variant={tipo.ativo ? "default" : "secondary"}>
+                            {tipo.ativo ? "Ativo" : "Inativo"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(tipo.created_at).toLocaleDateString('pt-BR')}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
+        <TipoEquipamentoModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          onSubmit={handleModalSubmit}
+        />
       </div>
     </Layout>
   );

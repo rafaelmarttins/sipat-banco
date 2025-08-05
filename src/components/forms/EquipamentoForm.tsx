@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useLocalizacoes } from '@/hooks/useLocalizacoes';
 import { useEquipamentos } from '@/hooks/useEquipamentos';
+import { useTiposEquipamento } from '@/hooks/useTiposEquipamento';
 
 const equipamentoSchema = z.object({
   modelo: z.string().min(1, 'Modelo é obrigatório'),
@@ -73,7 +74,7 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
     }
   };
 
-  const tiposEquipamento = ['PC', 'Monitor', 'Impressora', 'Nobreak', 'Notebook', 'Tablet'];
+  const { tipos: tiposEquipamento } = useTiposEquipamento();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -102,8 +103,8 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
                       </FormControl>
                       <SelectContent>
                         {tiposEquipamento.map((tipo) => (
-                          <SelectItem key={tipo} value={tipo}>
-                            {tipo}
+                          <SelectItem key={tipo.id} value={tipo.nome}>
+                            {tipo.nome}
                           </SelectItem>
                         ))}
                       </SelectContent>
