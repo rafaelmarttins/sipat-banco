@@ -42,7 +42,7 @@ const EditUsuarioModal: React.FC<EditUsuarioModalProps> = ({
       nome: '',
       email: '',
       setor: '',
-      localizacao_id: '',
+      localizacao_id: 'none',
       role: 'user',
     },
   });
@@ -53,7 +53,7 @@ const EditUsuarioModal: React.FC<EditUsuarioModalProps> = ({
         nome: usuario.nome,
         email: usuario.email,
         setor: usuario.setor,
-        localizacao_id: usuario.localizacao_id || '',
+        localizacao_id: usuario.localizacao_id || 'none',
         role: usuario.role,
       });
     }
@@ -66,7 +66,7 @@ const EditUsuarioModal: React.FC<EditUsuarioModalProps> = ({
       nome: data.nome,
       email: data.email,
       setor: data.setor,
-      localizacao_id: data.localizacao_id || null,
+      localizacao_id: data.localizacao_id === 'none' ? null : data.localizacao_id,
       role: data.role,
     };
 
@@ -145,7 +145,7 @@ const EditUsuarioModal: React.FC<EditUsuarioModalProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Nenhuma localização</SelectItem>
+                      <SelectItem value="none">Nenhuma localização</SelectItem>
                       {localizacoes.map((localizacao) => (
                         <SelectItem key={localizacao.id} value={localizacao.id}>
                           {localizacao.nome}

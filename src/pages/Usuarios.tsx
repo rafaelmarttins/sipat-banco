@@ -31,7 +31,7 @@ const Usuarios = () => {
     nome: '',
     email: '',
     setor: '',
-    localizacao_id: '',
+    localizacao_id: 'none',
     role: 'user',
     password: ''
   });
@@ -70,7 +70,7 @@ const Usuarios = () => {
           data: {
             nome: formData.nome,
             setor: formData.setor,
-            localizacao_id: formData.localizacao_id,
+            localizacao_id: formData.localizacao_id === 'none' ? '' : formData.localizacao_id,
             role: formData.role
           }
         }
@@ -81,7 +81,7 @@ const Usuarios = () => {
       }
 
       toast.success("Usuário criado com sucesso! O usuário deve verificar o email para ativar a conta.");
-      setFormData({ nome: '', email: '', setor: '', localizacao_id: '', role: 'user', password: '' });
+      setFormData({ nome: '', email: '', setor: '', localizacao_id: 'none', role: 'user', password: '' });
       setShowForm(false);
       // Recarregar lista de usuários
       fetchUsuarios();
@@ -241,7 +241,7 @@ const Usuarios = () => {
                         <SelectValue placeholder="Selecione a localização" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Nenhuma localização</SelectItem>
+                        <SelectItem value="none">Nenhuma localização</SelectItem>
                         {localizacoes.map((localizacao) => (
                           <SelectItem key={localizacao.id} value={localizacao.id}>
                             {localizacao.nome}
