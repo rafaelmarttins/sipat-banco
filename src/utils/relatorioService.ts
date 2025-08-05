@@ -1,16 +1,14 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { format } from 'date-fns';
 import { Equipamento } from '@/hooks/useEquipamentos';
 import { Movimentacao } from '@/hooks/useMovimentacoes';
 import { Usuario } from '@/hooks/useUsuarios';
 
-// Estender a interface do jsPDF para incluir autoTable
-declare module 'jspdf' {
-  interface jsPDF {
-    autoTable: (options: any) => jsPDF;
-  }
+// Tipos para jsPDF com autoTable
+interface jsPDFWithAutoTable extends jsPDF {
+  autoTable: typeof autoTable;
 }
 
 export interface RelatorioOptions {
@@ -37,7 +35,7 @@ export class RelatorioService {
   // ========== RELATÓRIOS PDF ==========
   
   static async gerarRelatorioEquipamentosPDF(equipamentos: Equipamento[], filtros?: any) {
-    const doc = new jsPDF();
+    const doc = new jsPDF() as jsPDFWithAutoTable;
     
     // Cabeçalho
     doc.setFontSize(20);
@@ -66,7 +64,7 @@ export class RelatorioService {
       this.formatDate(eq.created_at)
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: yPosition + 8,
       head: [['Patrimônio', 'Tipo', 'Descrição', 'Setor', 'Localização', 'Estado', 'Status', 'Data Cadastro']],
       body: tableData,
@@ -79,7 +77,7 @@ export class RelatorioService {
   }
 
   static async gerarRelatorioMovimentacoesPDF(movimentacoes: Movimentacao[], filtros?: any) {
-    const doc = new jsPDF();
+    const doc = new jsPDF() as jsPDFWithAutoTable;
     
     // Cabeçalho
     doc.setFontSize(20);
@@ -100,7 +98,7 @@ export class RelatorioService {
       mov.motivo
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: 56,
       head: [['Data/Hora', 'Patrimônio', 'Equipamento', 'Origem', 'Destino', 'Responsável', 'Motivo']],
       body: tableData,
@@ -112,7 +110,7 @@ export class RelatorioService {
   }
 
   static async gerarRelatorioUsuariosPDF(usuarios: Usuario[]) {
-    const doc = new jsPDF();
+    const doc = new jsPDF() as jsPDFWithAutoTable;
     
     // Cabeçalho
     doc.setFontSize(20);
@@ -136,7 +134,7 @@ export class RelatorioService {
       this.formatDate(user.created_at)
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: 56,
       head: [['Nome', 'Email', 'Setor', 'Perfil', 'Data Cadastro']],
       body: tableData,

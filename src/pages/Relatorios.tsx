@@ -37,13 +37,11 @@ const Relatorios = () => {
   const [formato, setFormato] = useState('pdf');
   const [dataInicio, setDataInicio] = useState<Date>();
   const [dataFim, setDataFim] = useState<Date>();
-  const [filtroSetor, setFiltroSetor] = useState('all');
-  const [filtroStatus, setFiltroStatus] = useState('all');
   const [filtroLocalizacao, setFiltroLocalizacao] = useState('all');
+  const [filtroStatus, setFiltroStatus] = useState('all');
   const [gerando, setGerando] = useState(false);
-
-  // Obter setores únicos dos equipamentos
-  const setoresUnicos = [...new Set(equipamentos.map(e => e.setor))].filter(Boolean);
+  // Obter localizações para filtro
+  const localizacoesOptions = localizacoes;
 
   const handleGerarRelatorio = async () => {
     try {
@@ -52,9 +50,8 @@ const Relatorios = () => {
       const filtros = {
         dataInicio,
         dataFim,
-        setor: filtroSetor !== 'all' ? filtroSetor : undefined,
-        status: filtroStatus !== 'all' ? filtroStatus : undefined,
-        localizacao: filtroLocalizacao !== 'all' ? filtroLocalizacao : undefined
+        localizacao: filtroLocalizacao !== 'all' ? filtroLocalizacao : undefined,
+        status: filtroStatus !== 'all' ? filtroStatus : undefined
       };
 
       // Filtrar dados baseado nos critérios
@@ -63,13 +60,12 @@ const Relatorios = () => {
       switch (tipoRelatorio) {
         case 'equipamentos':
           dadosFiltrados = equipamentos.filter(eq => {
-            const matchSetor = filtroSetor === 'all' || eq.setor === filtroSetor;
-            const matchStatus = filtroStatus === 'all' || eq.status === filtroStatus;
             const matchLocalizacao = filtroLocalizacao === 'all' || eq.localizacao_id === filtroLocalizacao;
+            const matchStatus = filtroStatus === 'all' || eq.status === filtroStatus;
             const matchDataInicio = !dataInicio || new Date(eq.created_at) >= dataInicio;
             const matchDataFim = !dataFim || new Date(eq.created_at) <= dataFim;
             
-            return matchSetor && matchStatus && matchLocalizacao && matchDataInicio && matchDataFim;
+            return matchLocalizacao && matchStatus && matchDataInicio && matchDataFim;
           });
           
           if (formato === 'pdf') {
@@ -96,8 +92,8 @@ const Relatorios = () => {
           
         case 'usuarios':
           dadosFiltrados = usuarios.filter(user => {
-            const matchSetor = filtroSetor === 'all' || user.setor === filtroSetor;
-            return matchSetor;
+            const matchLocalizacao = filtroLocalizacao === 'all' || user.setor === filtroLocalizacao;
+            return matchLocalizacao;
           });
           
           if (formato === 'pdf') {
@@ -308,15 +304,15 @@ const Relatorios = () => {
                 {/* Filtros específicos baseados no tipo */}
                 {(tipoRelatorio === 'equipamentos' || tipoRelatorio === 'usuarios') && (
                   <div className="space-y-2">
-                    <Label>Setor</Label>
-                    <Select value={filtroSetor} onValueChange={setFiltroSetor}>
+                    <Label>Localização</Label>
+                    <Select value={filtroLocalizacao} onValueChange={setFiltroLocalizacao}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Todos os setores" />
+                        <SelectValue placeholder="Todas as localizações" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Todos os setores</SelectItem>
-                        {setoresUnicos.map(setor => (
-                          <SelectItem key={setor} value={setor}>{setor}</SelectItem>
+                        <SelectItem value="all">Todas as localizações</SelectItem>
+                        {localizacoesOptions.map(loc => (
+                          <SelectItem key={loc.id} value={loc.id}>{loc.nome}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -324,21 +320,19 @@ const Relatorios = () => {
                 )}
 
                 {tipoRelatorio === 'equipamentos' && (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Status</Label>
-                      <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Todos os status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Todos os status</SelectItem>
-                          <SelectItem value="Ativo">Ativo</SelectItem>
-                          <SelectItem value="Desativado">Desativado</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </>
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Todos os status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos os status</SelectItem>
+                        <SelectItem value="Ativo">Ativo</SelectItem>
+                        <SelectItem value="Desativado">Desativado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 )}
               </div>
             </div>
