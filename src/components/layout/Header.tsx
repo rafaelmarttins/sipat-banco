@@ -1,11 +1,15 @@
 
-import React from 'react';
-import { Bell } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, LogOut, Key } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import ChangePasswordModal from '@/components/modals/ChangePasswordModal';
 
 const Header = () => {
-  const { profile } = useAuth();
+  const { profile, logout } = useAuth();
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   return (
     <header className="bg-white border-b border-slate-200 px-6 py-3">
@@ -33,13 +37,40 @@ const Header = () => {
           </Button>
 
           <div className="flex items-center space-x-2 pl-4 border-l border-slate-200">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-              {profile?.nome?.charAt(0)}
-            </div>
-            <span className="text-sm font-medium text-slate-700">{profile?.nome}</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center space-x-2 h-auto p-2">
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    {profile?.nome?.charAt(0)}
+                  </div>
+                  <div className="text-left">
+                    <span className="text-sm font-medium text-slate-700 block">{profile?.nome}</span>
+                    <Badge variant={profile?.role === 'admin' ? 'destructive' : 'secondary'} className="text-xs">
+                      {profile?.role === 'admin' ? 'Administrador' : 'Usuário'}
+                    </Badge>
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)}>
+                  <Key className="w-4 h-4 mr-2" />
+                  Alterar Senha
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="text-red-600">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
+      
+      <ChangePasswordModal 
+        open={isChangePasswordOpen}
+        onOpenChange={setIsChangePasswordOpen}
+      />
     </header>
   );
 };

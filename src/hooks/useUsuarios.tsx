@@ -27,16 +27,19 @@ export const useUsuarios = () => {
       
       // Apenas admins podem ver a lista de usuários
       if (profile?.role !== 'admin') {
+        console.log('User is not admin, profile:', profile);
         setUsuarios([]);
         return;
       }
 
+      console.log('Fetching usuarios for admin user:', profile);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      console.log('Usuarios fetched:', data);
       setUsuarios(data as Usuario[] || []);
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
