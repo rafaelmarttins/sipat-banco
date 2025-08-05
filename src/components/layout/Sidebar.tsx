@@ -32,12 +32,19 @@ const Sidebar = () => {
   ];
 
   const sistemaItems = [];
+  
+  console.log('Profile in sidebar:', profile);
+  console.log('Profile role:', profile?.role);
+  
   if (profile?.role === 'admin') {
+    console.log('User is admin - showing admin menu items');
     sistemaItems.push(
       { icon: Settings, label: 'Configurações', path: '/configuracoes' },
       { icon: BarChart3, label: 'Estatísticas', path: '/estatisticas' },
       { icon: Users, label: 'Usuários', path: '/usuarios' }
     );
+  } else {
+    console.log('User is not admin or profile not loaded');
   }
 
   const suporteItems = [
@@ -145,7 +152,11 @@ const Sidebar = () => {
       <div className="border-t border-slate-700">
         <div className="p-4">
           <div className="mb-3">
-            <p className="text-sm font-medium">{profile?.nome}</p>
+            <p className="text-sm font-medium">{profile?.nome || 'Carregando...'}</p>
+            <p className="text-xs text-slate-400">{profile?.setor}</p>
+            {profile?.role === 'admin' && (
+              <p className="text-xs text-green-400 font-medium">Administrador</p>
+            )}
           </div>
           <button
             onClick={logout}
