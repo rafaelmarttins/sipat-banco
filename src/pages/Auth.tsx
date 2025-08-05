@@ -65,7 +65,7 @@ const Auth = () => {
                 <Input
                   id="login-email"
                   type="email"
-                  placeholder="admin@sipat.com.br"
+                  placeholder="rafaelgemelli1@hotmail.com"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   required
