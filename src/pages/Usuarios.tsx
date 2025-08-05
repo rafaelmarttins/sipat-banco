@@ -59,15 +59,20 @@ const Usuarios = () => {
     setIsCreating(true);
 
     try {
-      // Usar Admin API para criar usuário
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Gerar senha temporária automática
+      const tempPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      
+      // Usar signup normal do Supabase
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
-        email_confirm: true, // Email já confirmado
-        user_metadata: {
-          nome: formData.nome,
-          setor: formData.setor,
-          localizacao: formData.localizacao,
-          role: formData.role
+        password: tempPassword,
+        options: {
+          data: {
+            nome: formData.nome,
+            setor: formData.setor,
+            localizacao: formData.localizacao,
+            role: formData.role
+          }
         }
       });
 
