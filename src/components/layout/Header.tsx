@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Bell, LogOut, Key } from 'lucide-react';
+import { Bell, LogOut, Key, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +17,7 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
-              <span className="text-white text-sm font-bold">S</span>
+              <Building2 className="w-5 h-5 text-white" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-slate-800">Sistema de Patrimônio</h1>
