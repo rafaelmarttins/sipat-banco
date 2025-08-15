@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
@@ -16,10 +16,26 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Separator } from '@/components/ui/separator';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarTrigger,
+  useSidebar,
+  SidebarHeader,
+  SidebarFooter,
+} from '@/components/ui/sidebar';
 
-const Sidebar = () => {
+const AppSidebar = () => {
   const location = useLocation();
   const { logout, profile } = useAuth();
+  const { state } = useSidebar();
+  const collapsed = state === 'collapsed';
 
   const principalItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -52,128 +68,176 @@ const Sidebar = () => {
     { icon: HelpCircle, label: 'Ajuda', path: '/ajuda' },
   ];
 
-  const MenuItem = ({ item, isActive }: { item: any, isActive: boolean }) => {
-    const Icon = item.icon;
-    return (
-      <a
-        href={item.path}
-        className={cn(
-          "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
-          isActive 
-            ? "bg-green-600 text-white" 
-            : "text-slate-300 hover:bg-slate-700 hover:text-white"
-        )}
-      >
-        <Icon className="w-4 h-4" />
-        <span>{item.label}</span>
-      </a>
-    );
-  };
-
-  const SectionTitle = ({ title }: { title: string }) => (
-    <div className="px-4 py-2">
-      <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wider">{title}</h3>
-    </div>
-  );
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="w-56 bg-slate-800 text-white min-h-screen flex flex-col">
-      {/* Header do Sidebar */}
-      <div className="p-4 border-b border-slate-700">
+    <Sidebar className={cn("bg-slate-800 text-white border-r border-slate-700", collapsed ? "w-14" : "w-56")} collapsible="icon">
+      <SidebarHeader className="p-4 border-b border-slate-700">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
             <Computer className="w-5 h-5" />
           </div>
-          <div>
-            <h2 className="font-bold text-sm">SIPAT</h2>
-            <p className="text-xs text-slate-400">Sistema de Patrimônio</p>
-          </div>
-        </div>
-        <div className="mt-3 text-xs text-slate-400">
-          Município de Chapadão do Sul - MS
-        </div>
-      </div>
-
-      {/* Menu Principal */}
-      <nav className="flex-1 py-4">
-        <SectionTitle title="PRINCIPAL" />
-        <div className="px-2 space-y-1">
-          {principalItems.map((item) => (
-            <MenuItem 
-              key={item.path} 
-              item={item} 
-              isActive={location.pathname === item.path}
-            />
-          ))}
-        </div>
-
-        <div className="mt-6">
-          <SectionTitle title="PATRIMÔNIO" />
-          <div className="px-2 space-y-1">
-            {patrimonioItems.map((item) => (
-              <MenuItem 
-                key={item.path} 
-                item={item} 
-                isActive={location.pathname === item.path}
-              />
-            ))}
-          </div>
-        </div>
-
-        {sistemaItems.length > 0 && (
-          <div className="mt-6">
-            <SectionTitle title="SISTEMA" />
-            <div className="px-2 space-y-1">
-              {sistemaItems.map((item) => (
-                <MenuItem 
-                  key={item.path} 
-                  item={item} 
-                  isActive={location.pathname === item.path}
-                />
-              ))}
+          {!collapsed && (
+            <div>
+              <h2 className="font-bold text-sm">SIPAT</h2>
+              <p className="text-xs text-slate-400">Sistema de Patrimônio</p>
             </div>
+          )}
+        </div>
+        {!collapsed && (
+          <div className="mt-3 text-xs text-slate-400">
+            Município de Chapadão do Sul - MS
           </div>
         )}
+      </SidebarHeader>
 
-        <div className="mt-6">
-          <SectionTitle title="SUPORTE" />
-          <div className="px-2 space-y-1">
-            {suporteItems.map((item) => (
-              <MenuItem 
-                key={item.path} 
-                item={item} 
-                isActive={location.pathname === item.path}
-              />
-            ))}
-          </div>
-        </div>
-      </nav>
+      <SidebarContent>
+        <SidebarGroup>
+          {!collapsed && <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider">PRINCIPAL</SidebarGroupLabel>}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {principalItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        cn(
+                          "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
+                          isActive 
+                            ? "bg-green-600 text-white" 
+                            : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                        )
+                      }
+                    >
+                      <item.icon className="w-4 h-4" />
+                      {!collapsed && <span>{item.label}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-      {/* Rodapé */}
-      <div className="border-t border-slate-700">
+        <SidebarGroup>
+          {!collapsed && <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider">PATRIMÔNIO</SidebarGroupLabel>}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {patrimonioItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        cn(
+                          "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
+                          isActive 
+                            ? "bg-green-600 text-white" 
+                            : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                        )
+                      }
+                    >
+                      <item.icon className="w-4 h-4" />
+                      {!collapsed && <span>{item.label}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {sistemaItems.length > 0 && (
+          <SidebarGroup>
+            {!collapsed && <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider">SISTEMA</SidebarGroupLabel>}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {sistemaItems.map((item) => (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.path}
+                        className={({ isActive }) =>
+                          cn(
+                            "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
+                            isActive 
+                              ? "bg-green-600 text-white" 
+                              : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                          )
+                        }
+                      >
+                        <item.icon className="w-4 h-4" />
+                        {!collapsed && <span>{item.label}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        <SidebarGroup>
+          {!collapsed && <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider">SUPORTE</SidebarGroupLabel>}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {suporteItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        cn(
+                          "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
+                          isActive 
+                            ? "bg-green-600 text-white" 
+                            : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                        )
+                      }
+                    >
+                      <item.icon className="w-4 h-4" />
+                      {!collapsed && <span>{item.label}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="border-t border-slate-700">
         <div className="p-4">
-          <div className="mb-3">
-            <p className="text-sm font-medium">{profile?.nome || 'Carregando...'}</p>
-            <p className="text-xs text-slate-400">{profile?.setor}</p>
-            {profile?.role === 'admin' && (
-              <p className="text-xs text-green-400 font-medium">Administrador</p>
-            )}
-          </div>
-          <Separator className="mb-3 bg-slate-600" />
+          {!collapsed && (
+            <div className="mb-3">
+              <p className="text-sm font-medium">{profile?.nome || 'Carregando...'}</p>
+              <p className="text-xs text-slate-400">{profile?.setor}</p>
+              {profile?.role === 'admin' && (
+                <p className="text-xs text-green-400 font-medium">Administrador</p>
+              )}
+            </div>
+          )}
+          {!collapsed && <Separator className="mb-3 bg-slate-600" />}
           <button
             onClick={logout}
-            className="flex items-center space-x-2 w-full px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-md transition-colors text-sm"
+            className={cn(
+              "flex items-center w-full px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-md transition-colors text-sm",
+              collapsed ? "justify-center" : "space-x-2"
+            )}
           >
             <LogOut className="w-4 h-4" />
-            <span>Sair</span>
+            {!collapsed && <span>Sair</span>}
           </button>
         </div>
-        <div className="px-4 py-2 text-xs text-slate-500 border-t border-slate-700">
-          v1.0 - Atualizado
-        </div>
-      </div>
-    </div>
+        {!collapsed && (
+          <div className="px-4 py-2 text-xs text-slate-500 border-t border-slate-700">
+            v1.0 - Atualizado
+          </div>
+        )}
+      </SidebarFooter>
+    </Sidebar>
   );
 };
 
-export default Sidebar;
+export default AppSidebar;
