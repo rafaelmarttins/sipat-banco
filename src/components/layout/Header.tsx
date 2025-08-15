@@ -43,7 +43,10 @@ const Header = () => {
                   <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
                     {profile?.nome?.charAt(0)}
                   </div>
-                  <span className="text-sm font-medium text-slate-700">{profile?.nome}</span>
+                  <div className="text-left">
+                    <div className="text-sm font-medium text-slate-700">{profile?.nome}</div>
+                    <div className="text-xs text-slate-500">Ver perfil</div>
+                  </div>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
