@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
   Computer, 
@@ -15,7 +14,6 @@ import {
   MapPin 
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Separator } from '@/components/ui/separator';
 import {
   Sidebar,
   SidebarContent,
@@ -23,18 +21,18 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+  SidebarHeader,
   SidebarTrigger,
   useSidebar,
-  SidebarHeader,
-  SidebarFooter,
 } from '@/components/ui/sidebar';
 
 const AppSidebar = () => {
   const location = useLocation();
   const { logout, profile } = useAuth();
-  const { state } = useSidebar();
+  const { state, open } = useSidebar();
   const collapsed = state === 'collapsed';
 
   const principalItems = [
@@ -50,18 +48,12 @@ const AppSidebar = () => {
 
   const sistemaItems = [];
   
-  console.log('Profile in sidebar:', profile);
-  console.log('Profile role:', profile?.role);
-  
   if (profile?.role === 'admin') {
-    console.log('User is admin - showing admin menu items');
     sistemaItems.push(
       { icon: Settings, label: 'Configurações', path: '/configuracoes' },
       { icon: BarChart3, label: 'Estatísticas', path: '/estatisticas' },
       { icon: Users, label: 'Usuários', path: '/usuarios' }
     );
-  } else {
-    console.log('User is not admin or profile not loaded');
   }
 
   const suporteItems = [
@@ -70,19 +62,38 @@ const AppSidebar = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  const renderMenuItems = (items: any[]) => (
+    <SidebarMenu>
+      {items.map((item) => (
+        <SidebarMenuItem key={item.path}>
+          <SidebarMenuButton asChild isActive={isActive(item.path)}>
+            <NavLink to={item.path}>
+              <item.icon className="w-4 h-4" />
+              {!collapsed && <span>{item.label}</span>}
+            </NavLink>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  );
+
   return (
-    <Sidebar className={cn("bg-slate-800 text-white border-r border-slate-700", collapsed ? "w-14" : "w-56")} collapsible="icon">
+    <Sidebar className="bg-slate-800 text-white border-slate-700">
+      {/* Header */}
       <SidebarHeader className="p-4 border-b border-slate-700">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
-            <Computer className="w-5 h-5" />
-          </div>
-          {!collapsed && (
-            <div>
-              <h2 className="font-bold text-sm">SIPAT</h2>
-              <p className="text-xs text-slate-400">Sistema de Patrimônio</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
+              <Computer className="w-5 h-5" />
             </div>
-          )}
+            {!collapsed && (
+              <div>
+                <h2 className="font-bold text-sm">SIPAT</h2>
+                <p className="text-xs text-slate-400">Sistema de Patrimônio</p>
+              </div>
+            )}
+          </div>
+          <SidebarTrigger className="text-slate-300 hover:text-white" />
         </div>
         {!collapsed && (
           <div className="mt-3 text-xs text-slate-400">
@@ -91,140 +102,65 @@ const AppSidebar = () => {
         )}
       </SidebarHeader>
 
-      <SidebarContent>
+      {/* Content */}
+      <SidebarContent className="py-4">
         <SidebarGroup>
-          {!collapsed && <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider">PRINCIPAL</SidebarGroupLabel>}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {principalItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) =>
-                        cn(
-                          "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
-                          isActive 
-                            ? "bg-green-600 text-white" 
-                            : "text-slate-300 hover:bg-slate-700 hover:text-white"
-                        )
-                      }
-                    >
-                      <item.icon className="w-4 h-4" />
-                      {!collapsed && <span>{item.label}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+          <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider px-4">
+            {!collapsed ? 'PRINCIPAL' : ''}
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="px-2">
+            {renderMenuItems(principalItems)}
           </SidebarGroupContent>
         </SidebarGroup>
 
         <SidebarGroup>
-          {!collapsed && <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider">PATRIMÔNIO</SidebarGroupLabel>}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {patrimonioItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) =>
-                        cn(
-                          "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
-                          isActive 
-                            ? "bg-green-600 text-white" 
-                            : "text-slate-300 hover:bg-slate-700 hover:text-white"
-                        )
-                      }
-                    >
-                      <item.icon className="w-4 h-4" />
-                      {!collapsed && <span>{item.label}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+          <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider px-4 mt-6">
+            {!collapsed ? 'PATRIMÔNIO' : ''}
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="px-2">
+            {renderMenuItems(patrimonioItems)}
           </SidebarGroupContent>
         </SidebarGroup>
 
         {sistemaItems.length > 0 && (
           <SidebarGroup>
-            {!collapsed && <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider">SISTEMA</SidebarGroupLabel>}
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {sistemaItems.map((item) => (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.path}
-                        className={({ isActive }) =>
-                          cn(
-                            "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
-                            isActive 
-                              ? "bg-green-600 text-white" 
-                              : "text-slate-300 hover:bg-slate-700 hover:text-white"
-                          )
-                        }
-                      >
-                        <item.icon className="w-4 h-4" />
-                        {!collapsed && <span>{item.label}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
+            <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider px-4 mt-6">
+              {!collapsed ? 'SISTEMA' : ''}
+            </SidebarGroupLabel>
+            <SidebarGroupContent className="px-2">
+              {renderMenuItems(sistemaItems)}
             </SidebarGroupContent>
           </SidebarGroup>
         )}
 
         <SidebarGroup>
-          {!collapsed && <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider">SUPORTE</SidebarGroupLabel>}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {suporteItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) =>
-                        cn(
-                          "flex items-center space-x-3 px-4 py-2.5 rounded-md text-sm transition-colors",
-                          isActive 
-                            ? "bg-green-600 text-white" 
-                            : "text-slate-300 hover:bg-slate-700 hover:text-white"
-                        )
-                      }
-                    >
-                      <item.icon className="w-4 h-4" />
-                      {!collapsed && <span>{item.label}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+          <SidebarGroupLabel className="text-xs font-medium text-slate-400 uppercase tracking-wider px-4 mt-6">
+            {!collapsed ? 'SUPORTE' : ''}
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="px-2">
+            {renderMenuItems(suporteItems)}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
+      {/* Footer */}
       <SidebarFooter className="border-t border-slate-700">
         <div className="p-4">
           {!collapsed && (
-            <div className="mb-3">
-              <p className="text-sm font-medium">{profile?.nome || 'Carregando...'}</p>
-              <p className="text-xs text-slate-400">{profile?.setor}</p>
-              {profile?.role === 'admin' && (
-                <p className="text-xs text-green-400 font-medium">Administrador</p>
-              )}
-            </div>
+            <>
+              <div className="mb-3">
+                <p className="text-sm font-medium">{profile?.nome || 'Carregando...'}</p>
+                <p className="text-xs text-slate-400">{profile?.setor}</p>
+                {profile?.role === 'admin' && (
+                  <p className="text-xs text-green-400 font-medium">Administrador</p>
+                )}
+              </div>
+              <div className="mb-3 h-px bg-slate-600" />
+            </>
           )}
-          {!collapsed && <Separator className="mb-3 bg-slate-600" />}
           <button
             onClick={logout}
-            className={cn(
-              "flex items-center w-full px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-md transition-colors text-sm",
-              collapsed ? "justify-center" : "space-x-2"
-            )}
+            className="flex items-center space-x-2 w-full px-3 py-2 text-slate-300 hover:bg-slate-700 rounded-md transition-colors text-sm"
           >
             <LogOut className="w-4 h-4" />
             {!collapsed && <span>Sair</span>}

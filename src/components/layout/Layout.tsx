@@ -2,7 +2,7 @@
 import React from 'react';
 import AppSidebar from './Sidebar';
 import Header from './Header';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,13 +11,10 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-gray-50">
+      <div className="flex min-h-screen bg-gray-50 w-full">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <Header />
-          <div className="p-2">
-            <SidebarTrigger className="ml-2" />
-          </div>
           <main className="flex-1 p-6 overflow-auto">
             {children}
           </main>
