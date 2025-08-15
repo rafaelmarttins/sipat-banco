@@ -132,7 +132,7 @@ const Sidebar = () => {
             <p className="text-xs text-slate-400">{profile?.setor}</p>
             {profile?.role === 'admin' && <p className="text-xs text-green-400 font-medium">Administrador</p>}
           </div>
-          <Separator className="mb-3 bg-slate-600" />
+          
           
         </div>
         <div className="px-4 py-2 text-xs text-slate-500 border-t border-slate-700">
