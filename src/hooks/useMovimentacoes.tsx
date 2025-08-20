@@ -19,6 +19,14 @@ export interface Movimentacao {
     id: string;
     nome: string;
   };
+  secretaria_origem?: {
+    id: string;
+    nome: string;
+  };
+  secretaria_destino?: {
+    id: string;
+    nome: string;
+  };
   data_movimentacao: string;
   responsavel?: {
     id: string;
@@ -55,6 +63,14 @@ export const useMovimentacoes = () => {
             id,
             nome
           ),
+          secretaria_origem:secretaria_origem_id (
+            id,
+            nome
+          ),
+          secretaria_destino:secretaria_destino_id (
+            id,
+            nome
+          ),
           responsavel:responsavel_id (
             id,
             nome
@@ -80,6 +96,8 @@ export const useMovimentacoes = () => {
     equipamento_id: string;
     localizacao_origem_id: string;
     localizacao_destino_id: string;
+    secretaria_origem_id?: string;
+    secretaria_destino_id?: string;
     responsavel_id: string;
     motivo: string;
     observacoes?: string;
@@ -101,6 +119,14 @@ export const useMovimentacoes = () => {
             nome
           ),
           localizacao_destino:localizacao_destino_id (
+            id,
+            nome
+          ),
+          secretaria_origem:secretaria_origem_id (
+            id,
+            nome
+          ),
+          secretaria_destino:secretaria_destino_id (
             id,
             nome
           ),

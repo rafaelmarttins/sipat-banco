@@ -20,6 +20,8 @@ const Movimentacoes = () => {
     (movimentacao.equipamento?.patrimonio?.toString() || '').includes(searchTerm) ||
     (movimentacao.localizacao_origem?.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (movimentacao.localizacao_destino?.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (movimentacao.secretaria_origem?.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (movimentacao.secretaria_destino?.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (movimentacao.responsavel?.nome || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -121,8 +123,8 @@ const Movimentacoes = () => {
                     <TableHead>Data</TableHead>
                     <TableHead>Equipamento</TableHead>
                     <TableHead>Patrimônio</TableHead>
-                    <TableHead>Origem</TableHead>
-                    <TableHead>Destino</TableHead>
+                    <TableHead>Localização</TableHead>
+                    <TableHead>Secretaria</TableHead>
                     <TableHead>Responsável</TableHead>
                     <TableHead>Motivo</TableHead>
                   </TableRow>
@@ -151,14 +153,32 @@ const Movimentacoes = () => {
                           #{movimentacao.equipamento?.patrimonio || 'N/A'}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-red-600 border-red-600">
-                            {movimentacao.localizacao_origem?.nome || 'N/A'}
-                          </Badge>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-red-600 border-red-600">
+                                {movimentacao.localizacao_origem?.nome || 'N/A'}
+                              </Badge>
+                              <span className="text-xs text-slate-500">→</span>
+                              <Badge className="bg-green-600 hover:bg-green-700">
+                                {movimentacao.localizacao_destino?.nome || 'N/A'}
+                              </Badge>
+                            </div>
+                          </div>
                         </TableCell>
                         <TableCell>
-                          <Badge className="bg-green-600 hover:bg-green-700">
-                            {movimentacao.localizacao_destino?.nome || 'N/A'}
-                          </Badge>
+                          <div className="space-y-1">
+                            {(movimentacao.secretaria_origem?.nome || movimentacao.secretaria_destino?.nome) && (
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-orange-600 border-orange-600">
+                                  {movimentacao.secretaria_origem?.nome || 'N/A'}
+                                </Badge>
+                                <span className="text-xs text-slate-500">→</span>
+                                <Badge className="bg-orange-600 hover:bg-orange-700">
+                                  {movimentacao.secretaria_destino?.nome || 'N/A'}
+                                </Badge>
+                              </div>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell>{movimentacao.responsavel?.nome || 'N/A'}</TableCell>
                         <TableCell className="max-w-xs truncate">

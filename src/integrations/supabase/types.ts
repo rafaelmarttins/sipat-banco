@@ -122,6 +122,8 @@ export type Database = {
           motivo: string
           observacoes: string | null
           responsavel_id: string
+          secretaria_destino_id: string | null
+          secretaria_origem_id: string | null
         }
         Insert: {
           created_at?: string
@@ -133,6 +135,8 @@ export type Database = {
           motivo: string
           observacoes?: string | null
           responsavel_id: string
+          secretaria_destino_id?: string | null
+          secretaria_origem_id?: string | null
         }
         Update: {
           created_at?: string
@@ -144,6 +148,8 @@ export type Database = {
           motivo?: string
           observacoes?: string | null
           responsavel_id?: string
+          secretaria_destino_id?: string | null
+          secretaria_origem_id?: string | null
         }
         Relationships: [
           {
@@ -172,6 +178,20 @@ export type Database = {
             columns: ["responsavel_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_secretaria_destino_id_fkey"
+            columns: ["secretaria_destino_id"]
+            isOneToOne: false
+            referencedRelation: "secretarias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_secretaria_origem_id_fkey"
+            columns: ["secretaria_origem_id"]
+            isOneToOne: false
+            referencedRelation: "secretarias"
             referencedColumns: ["id"]
           },
         ]
