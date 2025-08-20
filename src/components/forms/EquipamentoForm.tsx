@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useLocalizacoes } from '@/hooks/useLocalizacoes';
 import { useEquipamentos } from '@/hooks/useEquipamentos';
 import { useTiposEquipamento } from '@/hooks/useTiposEquipamento';
+import { useSecretarias } from '@/hooks/useSecretarias';
 
 const equipamentoSchema = z.object({
   modelo: z.string().min(1, 'Modelo é obrigatório'),
@@ -19,6 +20,7 @@ const equipamentoSchema = z.object({
   patrimonio: z.string().min(1, 'Número do patrimônio é obrigatório'),
   setor: z.string().min(1, 'Setor é obrigatório'),
   localizacao_id: z.string().min(1, 'Localização é obrigatória'),
+  secretaria_id: z.string().min(1, 'Secretaria é obrigatória'),
   data_aquisicao: z.string().optional(),
   estado_conservacao: z.enum(['Conservado', 'Meia-vida', 'Fim-da-vida', 'Novo']),
   vida_util: z.string().optional(),
@@ -35,6 +37,7 @@ interface EquipamentoFormProps {
 
 const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, onSubmit }) => {
   const { localizacoes } = useLocalizacoes();
+  const { secretarias } = useSecretarias();
   const { addEquipamento } = useEquipamentos();
   
   const form = useForm<EquipamentoFormData>({
@@ -45,6 +48,7 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
       patrimonio: '',
       setor: '',
       localizacao_id: '',
+      secretaria_id: '',
       data_aquisicao: '',
       estado_conservacao: 'Conservado',
       vida_util: '',
@@ -59,6 +63,7 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
       patrimonio: Number(data.patrimonio),
       setor: data.setor,
       localizacao_id: data.localizacao_id,
+      secretaria_id: data.secretaria_id,
       data_aquisicao: data.data_aquisicao || undefined,
       estado_conservacao: data.estado_conservacao,
       vida_util: data.vida_util || undefined,
@@ -138,6 +143,31 @@ const EquipamentoForm: React.FC<EquipamentoFormProps> = ({ open, onOpenChange, o
                   <FormControl>
                     <Input placeholder="Ex: Intel i5-8400, HP LaserJet..." {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="secretaria_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Secretaria</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a secretaria" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {secretarias.map((secretaria) => (
+                        <SelectItem key={secretaria.id} value={secretaria.id}>
+                          {secretaria.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

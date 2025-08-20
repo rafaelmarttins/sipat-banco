@@ -268,15 +268,16 @@ const Patrimonio = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Patrimônio</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Modelo/Processador</TableHead>
-                    <TableHead>Setor</TableHead>
-                    <TableHead>Localização</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Data Cadastro</TableHead>
-                    <TableHead>Ações</TableHead>
+                     <TableHead>Patrimônio</TableHead>
+                     <TableHead>Tipo</TableHead>
+                     <TableHead>Modelo/Processador</TableHead>
+                     <TableHead>Secretaria</TableHead>
+                     <TableHead>Setor</TableHead>
+                     <TableHead>Localização</TableHead>
+                     <TableHead>Estado</TableHead>
+                     <TableHead>Status</TableHead>
+                     <TableHead>Data Cadastro</TableHead>
+                     <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -304,9 +305,10 @@ const Patrimonio = () => {
                             <span className="font-medium">{equipamento.modelo}</span>
                           </div>
                         </TableCell>
-                        <TableCell>{equipamento.processado}</TableCell>
-                        <TableCell>{equipamento.setor}</TableCell>
-                        <TableCell>{equipamento.localizacao?.nome || 'N/A'}</TableCell>
+                         <TableCell>{equipamento.processado}</TableCell>
+                         <TableCell>{equipamento.secretaria?.nome || 'N/A'}</TableCell>
+                         <TableCell>{equipamento.setor}</TableCell>
+                         <TableCell>{equipamento.localizacao?.nome || 'N/A'}</TableCell>
                         <TableCell>{getEstadoBadge(equipamento.estado_conservacao)}</TableCell>
                         <TableCell>{getStatusBadge(equipamento.status)}</TableCell>
                         <TableCell>{format(new Date(equipamento.created_at), "dd/MM/yyyy")}</TableCell>

@@ -10,7 +10,12 @@ export interface Equipamento {
   patrimonio: number;
   setor: string;
   localizacao_id: string;
+  secretaria_id?: string;
   localizacao?: {
+    id: string;
+    nome: string;
+  };
+  secretaria?: {
     id: string;
     nome: string;
   };
@@ -39,6 +44,10 @@ export const useEquipamentos = () => {
           localizacao:localizacao_id (
             id,
             nome
+          ),
+          secretaria:secretaria_id (
+            id,
+            nome
           )
         `)
         .order('created_at', { ascending: false });
@@ -57,7 +66,7 @@ export const useEquipamentos = () => {
     }
   };
 
-  const addEquipamento = async (equipamentoData: Omit<Equipamento, 'id' | 'created_at' | 'updated_at' | 'localizacao'>) => {
+  const addEquipamento = async (equipamentoData: Omit<Equipamento, 'id' | 'created_at' | 'updated_at' | 'localizacao' | 'secretaria'>) => {
     try {
       if (!profile?.id) {
         throw new Error('Usuário não autenticado');
@@ -72,6 +81,10 @@ export const useEquipamentos = () => {
         .select(`
           *,
           localizacao:localizacao_id (
+            id,
+            nome
+          ),
+          secretaria:secretaria_id (
             id,
             nome
           )
@@ -107,6 +120,10 @@ export const useEquipamentos = () => {
         .select(`
           *,
           localizacao:localizacao_id (
+            id,
+            nome
+          ),
+          secretaria:secretaria_id (
             id,
             nome
           )
@@ -147,6 +164,10 @@ export const useEquipamentos = () => {
         .select(`
           *,
           localizacao:localizacao_id (
+            id,
+            nome
+          ),
+          secretaria:secretaria_id (
             id,
             nome
           )

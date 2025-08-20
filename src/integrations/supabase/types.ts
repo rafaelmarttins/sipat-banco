@@ -25,6 +25,7 @@ export type Database = {
           observacoes: string | null
           patrimonio: number
           processado: string
+          secretaria_id: string | null
           setor: string
           status: string
           updated_at: string
@@ -41,6 +42,7 @@ export type Database = {
           observacoes?: string | null
           patrimonio: number
           processado: string
+          secretaria_id?: string | null
           setor: string
           status?: string
           updated_at?: string
@@ -57,6 +59,7 @@ export type Database = {
           observacoes?: string | null
           patrimonio?: number
           processado?: string
+          secretaria_id?: string | null
           setor?: string
           status?: string
           updated_at?: string
@@ -69,6 +72,13 @@ export type Database = {
             columns: ["localizacao_id"]
             isOneToOne: false
             referencedRelation: "localizacoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipamentos_secretaria_id_fkey"
+            columns: ["secretaria_id"]
+            isOneToOne: false
+            referencedRelation: "secretarias"
             referencedColumns: ["id"]
           },
           {
@@ -176,6 +186,7 @@ export type Database = {
           nome: string
           password_reset_required: boolean | null
           role: string
+          secretaria_id: string | null
           setor: string
           updated_at: string
         }
@@ -188,6 +199,7 @@ export type Database = {
           nome: string
           password_reset_required?: boolean | null
           role?: string
+          secretaria_id?: string | null
           setor?: string
           updated_at?: string
         }
@@ -200,6 +212,7 @@ export type Database = {
           nome?: string
           password_reset_required?: boolean | null
           role?: string
+          secretaria_id?: string | null
           setor?: string
           updated_at?: string
         }
@@ -211,7 +224,41 @@ export type Database = {
             referencedRelation: "localizacoes"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "profiles_secretaria_id_fkey"
+            columns: ["secretaria_id"]
+            isOneToOne: false
+            referencedRelation: "secretarias"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      secretarias: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       tipos_equipamento: {
         Row: {
