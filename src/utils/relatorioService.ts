@@ -37,178 +37,112 @@ export class RelatorioService {
   static async gerarRelatorioEquipamentosPDF(equipamentos: Equipamento[], filtros?: any) {
     const doc = new jsPDF() as jsPDFWithAutoTable;
     
-    // Cores do sistema
-    const primaryColor = [34, 44, 63];
-    const secondaryColor = [241, 245, 249];
-    const accentColor = [59, 130, 246];
-    const mutedColor = [100, 116, 139];
-    const successColor = [34, 197, 94];
-    const dangerColor = [239, 68, 68];
+    // Cores do sistema (baseadas no design system)
+    const primaryColor = [34, 44, 63]; // hsl(222.2 47.4% 11.2%) convertido para RGB
+    const secondaryColor = [241, 245, 249]; // hsl(210 40% 96.1%) convertido para RGB
+    const accentColor = [59, 130, 246]; // Azul para destaques
+    const mutedColor = [100, 116, 139]; // hsl(215.4 16.3% 46.9%) convertido para RGB
     
-    // Cabeçalho principal
+    // Cabeçalho estilizado
     doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-    doc.rect(0, 0, 210, 40, 'F');
+    doc.rect(0, 0, 210, 35, 'F');
     
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(20);
+    doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
-    doc.text('📋 Detalhes dos Equipamentos', 14, 25);
-
-    let yPosition = 50;
-
-    // Seção de Resumo
+    doc.text('RELATÓRIO DE EQUIPAMENTOS', 14, 22);
+    
+    // Reset de cor para o resto do documento
     doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Resumo', 14, yPosition);
-    yPosition += 10;
-
-    // Cards de estatísticas
-    const totalAtivos = equipamentos.filter(e => e.status === 'Ativo').length;
-    const totalDesativados = equipamentos.filter(e => e.status === 'Desativado').length;
-
+    
+    // Informações gerais em cards
     doc.setFillColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
-    doc.roundedRect(20, yPosition, 55, 20, 3, 3, 'F');
-    doc.roundedRect(85, yPosition, 55, 20, 3, 3, 'F');
-    doc.roundedRect(150, yPosition, 46, 20, 3, 3, 'F');
-
-    doc.setFontSize(9);
+    doc.roundedRect(14, 45, 85, 25, 3, 3, 'F');
+    doc.roundedRect(111, 45, 85, 25, 3, 3, 'F');
+    
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text('Total:', 24, yPosition + 8);
+    doc.text('Data de Geração:', 18, 55);
     doc.setFont('helvetica', 'bold');
-    doc.text(equipamentos.length.toString(), 24, yPosition + 15);
-
+    doc.text(format(new Date(), 'dd/MM/yyyy HH:mm'), 18, 62);
+    
     doc.setFont('helvetica', 'normal');
-    doc.text('Ativos:', 89, yPosition + 8);
+    doc.text('Total de Equipamentos:', 115, 55);
     doc.setFont('helvetica', 'bold');
-    doc.text(totalAtivos.toString(), 89, yPosition + 15);
+    doc.text(equipamentos.length.toString(), 115, 62);
 
-    doc.setFont('helvetica', 'normal');
-    doc.text('Desativados:', 154, yPosition + 8);
-    doc.setFont('helvetica', 'bold');
-    doc.text(totalDesativados.toString(), 154, yPosition + 15);
+    let yPosition = 80;
 
-    yPosition += 35;
-
-    // Filtros aplicados
+    // Filtros aplicados (se houver)
     if (filtros?.dataInicio || filtros?.dataFim || filtros?.setor || filtros?.status) {
       doc.setFillColor(accentColor[0], accentColor[1], accentColor[2]);
-      doc.roundedRect(14, yPosition, 182, 18, 3, 3, 'F');
+      doc.roundedRect(14, yPosition, 182, 20, 3, 3, 'F');
       
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.text('FILTROS APLICADOS', 18, yPosition + 11);
+      doc.text('FILTROS APLICADOS', 18, yPosition + 8);
       
-      yPosition += 25;
       doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
+      yPosition += 25;
       
       if (filtros?.dataInicio || filtros?.dataFim) {
-        doc.text(`• Período: ${filtros?.dataInicio ? this.formatDate(filtros.dataInicio) : 'Início'} até ${filtros?.dataFim ? this.formatDate(filtros.dataFim) : 'Fim'}`, 20, yPosition);
-        yPosition += 6;
+        doc.text(`Período: ${filtros?.dataInicio ? this.formatDate(filtros.dataInicio) : 'Início'} até ${filtros?.dataFim ? this.formatDate(filtros.dataFim) : 'Fim'}`, 18, yPosition);
+        yPosition += 8;
       }
       if (filtros?.setor) {
-        doc.text(`• Setor: ${filtros.setor}`, 20, yPosition);
-        yPosition += 6;
+        doc.text(`Setor: ${filtros.setor}`, 18, yPosition);
+        yPosition += 8;
       }
       if (filtros?.status) {
-        doc.text(`• Status: ${filtros.status}`, 20, yPosition);
-        yPosition += 6;
+        doc.text(`Status: ${filtros.status}`, 18, yPosition);
+        yPosition += 8;
       }
       yPosition += 10;
     }
 
-    // Cronograma de Equipamentos (estilo cascata)
-    doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    // Equipamentos em formato de cards
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
-    doc.text('🔧 Cronograma de Equipamentos', 14, yPosition);
+    doc.text('EQUIPAMENTOS', 14, yPosition);
     yPosition += 15;
 
-    // Agrupar por setor
-    const equipamentosPorSetor = equipamentos.reduce((acc, eq) => {
-      const setor = eq.setor || 'Sem Setor';
-      if (!acc[setor]) acc[setor] = [];
-      acc[setor].push(eq);
-      return acc;
-    }, {} as Record<string, typeof equipamentos>);
-
-    Object.entries(equipamentosPorSetor).forEach(([setor, equipamentosSetor], setorIndex) => {
-      if (yPosition > 260) {
+    equipamentos.forEach((eq, index) => {
+      if (yPosition > 250) {
         doc.addPage();
         yPosition = 20;
       }
 
-      // Cabeçalho do setor
-      doc.setFillColor(accentColor[0], accentColor[1], accentColor[2]);
-      doc.roundedRect(14, yPosition, 182, 12, 2, 2, 'F');
+      // Card do equipamento
+      doc.setFillColor(index % 2 === 0 ? 255 : secondaryColor[0], index % 2 === 0 ? 255 : secondaryColor[1], index % 2 === 0 ? 255 : secondaryColor[2]);
+      doc.roundedRect(14, yPosition, 182, 35, 2, 2, 'F');
+      
+      // Borda colorida baseada no status
+      const statusColor = eq.status === 'Ativo' ? [34, 197, 94] : eq.status === 'Desativado' ? [239, 68, 68] : mutedColor;
+      doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
+      doc.rect(14, yPosition, 3, 35, 'F');
+      
+      // Conteúdo do card
+      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text(`#${eq.patrimonio} - ${eq.modelo}`, 22, yPosition + 8);
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.text(`Descrição: ${eq.processado}`, 22, yPosition + 16);
+      doc.text(`Setor: ${eq.setor} | Localização: ${eq.localizacao?.nome || 'N/A'}`, 22, yPosition + 22);
+      doc.text(`Estado: ${eq.estado_conservacao} | Status: ${eq.status}`, 22, yPosition + 28);
+      
+      // Badge de status
+      doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
+      doc.roundedRect(150, yPosition + 5, 40, 8, 2, 2, 'F');
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.text(`${setor} (${equipamentosSetor.length} equipamentos)`, 18, yPosition + 8);
+      doc.setFontSize(8);
+      doc.text(eq.status, 170 - (eq.status.length * 1.5), yPosition + 11);
       
-      yPosition += 18;
-
-      // Timeline vertical para equipamentos do setor
-      equipamentosSetor.forEach((eq, index) => {
-        if (yPosition > 260) {
-          doc.addPage();
-          yPosition = 20;
-        }
-
-        // Linha da timeline
-        doc.setDrawColor(mutedColor[0], mutedColor[1], mutedColor[2]);
-        doc.setLineWidth(0.5);
-        if (index < equipamentosSetor.length - 1) {
-          doc.line(25, yPosition + 15, 25, yPosition + 45);
-        }
-
-        // Círculo de status
-        const statusColor = eq.status === 'Ativo' ? successColor : eq.status === 'Desativado' ? dangerColor : mutedColor;
-        doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
-        doc.circle(25, yPosition + 15, 4, 'F');
-
-        // Card do equipamento
-        doc.setFillColor(255, 255, 255);
-        doc.roundedRect(35, yPosition, 155, 28, 2, 2, 'F');
-        doc.setDrawColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
-        doc.setLineWidth(0.3);
-        doc.roundedRect(35, yPosition, 155, 28, 2, 2, 'S');
-
-        // Conteúdo do equipamento
-        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(10);
-        doc.text(`#${eq.patrimonio} - ${eq.modelo}`, 40, yPosition + 8);
-
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
-        doc.text(`${eq.processado}`, 40, yPosition + 15);
-        doc.text(`Local: ${eq.localizacao?.nome || 'N/A'} | Estado: ${eq.estado_conservacao}`, 40, yPosition + 22);
-
-        // Badge de status
-        doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
-        doc.roundedRect(150, yPosition + 5, 30, 8, 1, 1, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(7);
-        doc.text(eq.status, 165 - (eq.status.length * 1), yPosition + 10);
-
-        // Data (se disponível)
-        if (eq.data_aquisicao) {
-          doc.setTextColor(mutedColor[0], mutedColor[1], mutedColor[2]);
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(7);
-          const dataText = this.formatDate(eq.data_aquisicao);
-          doc.text(dataText, 190 - (dataText.length * 1.5), yPosition + 20);
-        }
-
-        yPosition += 35;
-      });
-
-      yPosition += 10; // Espaço entre setores
+      yPosition += 40;
     });
 
     // Rodapé
