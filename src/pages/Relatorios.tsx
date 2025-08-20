@@ -16,7 +16,8 @@ import {
   Users, 
   Monitor, 
   ArrowRightLeft,
-  MapPin 
+  MapPin,
+  Building2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -24,6 +25,7 @@ import { useEquipamentos } from '@/hooks/useEquipamentos';
 import { useMovimentacoes } from '@/hooks/useMovimentacoes';
 import { useUsuarios } from '@/hooks/useUsuarios';
 import { useLocalizacoes } from '@/hooks/useLocalizacoes';
+import { useSecretarias } from '@/hooks/useSecretarias';
 import { RelatorioService } from '@/utils/relatorioService';
 import { toast } from 'sonner';
 
@@ -32,12 +34,14 @@ const Relatorios = () => {
   const { movimentacoes } = useMovimentacoes();
   const { usuarios } = useUsuarios();
   const { localizacoes } = useLocalizacoes();
+  const { secretarias } = useSecretarias();
 
   const [tipoRelatorio, setTipoRelatorio] = useState('equipamentos');
   const [formato, setFormato] = useState('pdf');
   const [dataInicio, setDataInicio] = useState<Date>();
   const [dataFim, setDataFim] = useState<Date>();
   const [filtroLocalizacao, setFiltroLocalizacao] = useState('all');
+  const [filtroSecretaria, setFiltroSecretaria] = useState('all');
   const [filtroStatus, setFiltroStatus] = useState('all');
   const [gerando, setGerando] = useState(false);
   // Obter localizações para filtro
@@ -51,6 +55,7 @@ const Relatorios = () => {
         dataInicio,
         dataFim,
         localizacao: filtroLocalizacao !== 'all' ? filtroLocalizacao : undefined,
+        secretaria: filtroSecretaria !== 'all' ? filtroSecretaria : undefined,
         status: filtroStatus !== 'all' ? filtroStatus : undefined
       };
 
@@ -61,11 +66,12 @@ const Relatorios = () => {
         case 'equipamentos':
           dadosFiltrados = equipamentos.filter(eq => {
             const matchLocalizacao = filtroLocalizacao === 'all' || eq.localizacao_id === filtroLocalizacao;
+            const matchSecretaria = filtroSecretaria === 'all' || eq.secretaria_id === filtroSecretaria;
             const matchStatus = filtroStatus === 'all' || eq.status === filtroStatus;
             const matchDataInicio = !dataInicio || new Date(eq.created_at) >= dataInicio;
             const matchDataFim = !dataFim || new Date(eq.created_at) <= dataFim;
             
-            return matchLocalizacao && matchStatus && matchDataInicio && matchDataFim;
+            return matchLocalizacao && matchSecretaria && matchStatus && matchDataInicio && matchDataFim;
           });
           
           if (formato === 'pdf') {
@@ -77,10 +83,13 @@ const Relatorios = () => {
           
         case 'movimentacoes':
           dadosFiltrados = movimentacoes.filter(mov => {
+            const matchSecretariaOrigem = filtroSecretaria === 'all' || mov.secretaria_origem?.id === filtroSecretaria;
+            const matchSecretariaDestino = filtroSecretaria === 'all' || mov.secretaria_destino?.id === filtroSecretaria;
+            const matchSecretaria = filtroSecretaria === 'all' || matchSecretariaOrigem || matchSecretariaDestino;
             const matchDataInicio = !dataInicio || new Date(mov.data_movimentacao) >= dataInicio;
             const matchDataFim = !dataFim || new Date(mov.data_movimentacao) <= dataFim;
             
-            return matchDataInicio && matchDataFim;
+            return matchSecretaria && matchDataInicio && matchDataFim;
           });
           
           if (formato === 'pdf') {
@@ -92,8 +101,9 @@ const Relatorios = () => {
           
         case 'usuarios':
           dadosFiltrados = usuarios.filter(user => {
-            const matchLocalizacao = filtroLocalizacao === 'all' || user.setor === filtroLocalizacao;
-            return matchLocalizacao;
+            const matchLocalizacao = filtroLocalizacao === 'all' || user.localizacao === filtroLocalizacao;
+            const matchSecretaria = filtroSecretaria === 'all'; // Users don't have secretaria in current interface
+            return matchLocalizacao && matchSecretaria;
           });
           
           if (formato === 'pdf') {
@@ -247,94 +257,160 @@ const Relatorios = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Filtros</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Filtro de Data */}
-                <div className="space-y-2">
-                  <Label>Data Início</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "justify-start text-left font-normal",
-                          !dataInicio && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dataInicio ? format(dataInicio, "dd/MM/yyyy") : "Selecionar"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={dataInicio}
-                        onSelect={setDataInicio}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Data Fim</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "justify-start text-left font-normal",
-                          !dataFim && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dataFim ? format(dataFim, "dd/MM/yyyy") : "Selecionar"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={dataFim}
-                        onSelect={setDataFim}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                {/* Filtros específicos baseados no tipo */}
-                {(tipoRelatorio === 'equipamentos' || tipoRelatorio === 'usuarios') && (
+              {/* Filtros de Data */}
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-slate-700 mb-3">Período</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Localização</Label>
-                    <Select value={filtroLocalizacao} onValueChange={setFiltroLocalizacao}>
+                    <Label>Data Início</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !dataInicio && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {dataInicio ? format(dataInicio, "dd/MM/yyyy") : "Selecionar"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={dataInicio}
+                          onSelect={setDataInicio}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Data Fim</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !dataFim && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {dataFim ? format(dataFim, "dd/MM/yyyy") : "Selecionar"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={dataFim}
+                          onSelect={setDataFim}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+              </div>
+
+              {/* Filtros por Categoria */}
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-slate-700 mb-3">Filtros por Categoria</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Filtro de Localização */}
+                  {(tipoRelatorio === 'equipamentos' || tipoRelatorio === 'usuarios') && (
+                    <div className="space-y-2">
+                      <Label className="flex items-center space-x-2">
+                        <MapPin className="w-4 h-4" />
+                        <span>Localização</span>
+                      </Label>
+                      <Select value={filtroLocalizacao} onValueChange={setFiltroLocalizacao}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Todas as localizações" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Todas as localizações</SelectItem>
+                          {localizacoes.map(loc => (
+                            <SelectItem key={loc.id} value={loc.id}>{loc.nome}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  {/* Filtro de Secretaria */}
+                  <div className="space-y-2">
+                    <Label className="flex items-center space-x-2">
+                      <Building2 className="w-4 h-4" />
+                      <span>Secretaria</span>
+                    </Label>
+                    <Select value={filtroSecretaria} onValueChange={setFiltroSecretaria}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Todas as localizações" />
+                        <SelectValue placeholder="Todas as secretarias" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Todas as localizações</SelectItem>
-                        {localizacoesOptions.map(loc => (
-                          <SelectItem key={loc.id} value={loc.id}>{loc.nome}</SelectItem>
+                        <SelectItem value="all">Todas as secretarias</SelectItem>
+                        {secretarias.map(sec => (
+                          <SelectItem key={sec.id} value={sec.id}>{sec.nome}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                )}
 
-                {tipoRelatorio === 'equipamentos' && (
-                  <div className="space-y-2">
-                    <Label>Status</Label>
-                    <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Todos os status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Todos os status</SelectItem>
-                        <SelectItem value="Ativo">Ativo</SelectItem>
-                        <SelectItem value="Desativado">Desativado</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+                  {/* Filtro de Status */}
+                  {tipoRelatorio === 'equipamentos' && (
+                    <div className="space-y-2">
+                      <Label>Status</Label>
+                      <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Todos os status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Todos os status</SelectItem>
+                          <SelectItem value="Ativo">Ativo</SelectItem>
+                          <SelectItem value="Desativado">Desativado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Filtros Ativos */}
+              {(dataInicio || dataFim || filtroLocalizacao !== 'all' || filtroSecretaria !== 'all' || filtroStatus !== 'all') && (
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium text-blue-900 mb-2">Filtros Aplicados:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {dataInicio && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                        Início: {format(dataInicio, "dd/MM/yyyy")}
+                      </span>
+                    )}
+                    {dataFim && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                        Fim: {format(dataFim, "dd/MM/yyyy")}
+                      </span>
+                    )}
+                    {filtroLocalizacao !== 'all' && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                        Localização: {localizacoes.find(l => l.id === filtroLocalizacao)?.nome}
+                      </span>
+                    )}
+                    {filtroSecretaria !== 'all' && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                        Secretaria: {secretarias.find(s => s.id === filtroSecretaria)?.nome}
+                      </span>
+                    )}
+                    {filtroStatus !== 'all' && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                        Status: {filtroStatus}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <Separator />
