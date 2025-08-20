@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Equipamento } from '@/hooks/useEquipamentos';
 import { useLocalizacoes } from '@/hooks/useLocalizacoes';
 import { useTiposEquipamento } from '@/hooks/useTiposEquipamento';
+import { useSecretarias } from '@/hooks/useSecretarias';
 
 const editEquipamentoSchema = z.object({
   modelo: z.string().min(1, 'Modelo é obrigatório'),
@@ -18,6 +19,7 @@ const editEquipamentoSchema = z.object({
   patrimonio: z.string().min(1, 'Número do patrimônio é obrigatório'),
   setor: z.string().min(1, 'Setor é obrigatório'),
   localizacao: z.string().min(1, 'Localização é obrigatória'),
+  secretaria_id: z.string().min(1, 'Secretaria é obrigatória'),
   aquisicao: z.string().optional(),
   estadoConservacao: z.enum(['Conservado', 'Meia-vida', 'Fim-da-vida', 'Novo']),
   vidaUtil: z.string().optional(),
@@ -41,6 +43,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
   onSubmit,
 }) => {
   const { localizacoes } = useLocalizacoes();
+  const { secretarias } = useSecretarias();
   const form = useForm<EditEquipamentoFormData>({
     resolver: zodResolver(editEquipamentoSchema),
     defaultValues: {
@@ -49,6 +52,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
       patrimonio: '',
       setor: '',
       localizacao: '',
+      secretaria_id: '',
       aquisicao: '',
       estadoConservacao: 'Conservado',
       vidaUtil: '',
@@ -65,6 +69,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
         patrimonio: equipamento.patrimonio.toString(),
         setor: equipamento.setor,
         localizacao: equipamento.localizacao_id,
+        secretaria_id: equipamento.secretaria_id || '',
         aquisicao: equipamento.data_aquisicao || '',
         estadoConservacao: equipamento.estado_conservacao,
         vidaUtil: equipamento.vida_util || '',
@@ -83,6 +88,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
       patrimonio: Number(data.patrimonio),
       setor: data.setor,
       localizacao_id: data.localizacao,
+      secretaria_id: data.secretaria_id,
       data_aquisicao: data.aquisicao,
       estado_conservacao: data.estadoConservacao,
       vida_util: data.vidaUtil,
@@ -160,6 +166,31 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
                   <FormControl>
                     <Input placeholder="Ex: Intel i5-8400, HP LaserJet..." {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="secretaria_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Secretaria</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a secretaria" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {secretarias.map((secretaria) => (
+                        <SelectItem key={secretaria.id} value={secretaria.id}>
+                          {secretaria.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
