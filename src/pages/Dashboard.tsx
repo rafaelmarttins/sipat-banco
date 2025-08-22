@@ -35,7 +35,7 @@ const Dashboard = () => {
            dataMovimentacao.getFullYear() === agora.getFullYear();
   }).length;
 
-  const movimentacoesRecentes = movimentacoes.slice(0, 3);
+  const movimentacoesRecentes = movimentacoes.slice(0, 5);
 
   return (
     <Layout>
