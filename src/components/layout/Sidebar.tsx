@@ -68,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
           "flex items-center w-full text-left space-x-3 px-4 py-2.5 rounded-md text-sm transition-all duration-200 group",
           isActive 
             ? "bg-green-600 text-white" 
-            : "text-slate-300 hover:bg-slate-700 hover:text-white",
+            : "text-white hover:bg-slate-700 hover:text-white",
           isCollapsed && "justify-center px-2"
         )}
         title={isCollapsed ? item.label : undefined}
@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
   const SectionTitle = ({ title }: { title: string }) => (
     <div className={cn("px-4 py-2", isCollapsed && "px-2")}>
       {!isCollapsed && (
-        <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+        <h3 className="text-xs font-medium text-white uppercase tracking-wider">
           {title}
         </h3>
       )}
