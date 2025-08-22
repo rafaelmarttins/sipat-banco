@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
   const SectionTitle = ({ title }: { title: string }) => (
     <div className={cn("px-4 py-2", isCollapsed && "px-2")}>
       {!isCollapsed && (
-        <h3 className="text-xs font-medium text-white uppercase tracking-wider">
+        <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wider">
           {title}
         </h3>
       )}
