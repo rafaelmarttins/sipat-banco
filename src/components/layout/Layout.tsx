@@ -21,8 +21,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Rodapé similar ao CEGIT */}
         <footer className="bg-green-600 text-white px-6 py-2">
           <div className="flex items-center justify-between text-sm">
-            <span>Sistema de Patrimônio v1.0 © 2025 SIPAT. Prefeitura Municipal. Todos os direitos reservados.</span>
-            <span>Aledevs</span>
+            <div className="flex flex-col">
+              <span>SIPAT v1.0</span>
+              <span>© 2025 SIPAT • Prefeitura Municipal</span>
+            </div>
+            <span>Desenvolvido por Rafael Martins</span>
           </div>
         </footer>
       </div>
