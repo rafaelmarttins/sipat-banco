@@ -93,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
   return (
     <div 
       className={cn(
-        "bg-slate-800 text-white min-h-screen flex flex-col transition-all duration-300 relative",
+        "bg-slate-800 text-white h-screen flex flex-col transition-all duration-300 relative",
         isCollapsed ? "w-16" : "w-56"
       )}
     >
@@ -185,31 +185,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
       </nav>
 
       {/* Rodapé */}
-      <div className="border-t border-slate-700">
-        <div className={cn("p-4", isCollapsed && "p-2")}>
-          {!isCollapsed && (
-            <div className="mb-3">
-              <p className="text-sm font-medium truncate">{profile?.nome || 'Carregando...'}</p>
-              <p className="text-xs text-slate-400 truncate">{profile?.setor}</p>
-              {profile?.role === 'admin' && (
-                <p className="text-xs text-green-400 font-medium">Administrador</p>
-              )}
-            </div>
-          )}
-          
-          {isCollapsed && (
-            <div className="flex justify-center">
-              <div 
-                className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                title={profile?.nome || 'Usuário'}
-              >
-                {profile?.nome?.charAt(0) || 'U'}
-              </div>
-            </div>
-          )}
-        </div>
-        
-        <div className={cn("px-4 py-2 text-xs text-slate-500 border-t border-slate-700", isCollapsed && "px-2 text-center")}>
+      <div className="border-t border-slate-700 mt-auto">
+        <div className={cn("px-4 py-2 text-xs text-slate-500", isCollapsed && "px-2 text-center")}>
           {isCollapsed ? "v1.0" : "v1.0 - Atualizado"}
         </div>
       </div>
