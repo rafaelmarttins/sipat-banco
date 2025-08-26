@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Home, Computer, ArrowRightLeft, FileText, Settings, BarChart3, Users, HelpCircle, MapPin, ChevronLeft, ChevronRight, LogOut, Sparkles, Calculator, ClipboardList, Briefcase, DollarSign, TrendingUp, BookOpen } from 'lucide-react';
+import { Home, Computer, ArrowRightLeft, FileText, Settings, BarChart3, Users, HelpCircle, MapPin, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface SidebarProps {
@@ -15,51 +15,41 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
     icon: Home,
     label: 'Dashboard',
     path: '/dashboard'
-  }, {
-    icon: Sparkles,
-    label: 'Novidades',
-    path: '/novidades'
-  }, {
-    icon: Calculator,
-    label: 'Calculadora',
-    path: '/calculadora'
   }];
-
-  const viagensItems = [{
-    icon: ClipboardList,
-    label: 'Planejamentos',
-    path: '/planejamentos'
+  const patrimonioItems = [{
+    icon: Computer,
+    label: 'Patrimônio',
+    path: '/patrimonio'
   }, {
-    icon: Briefcase,
-    label: 'Minhas Viagens',
-    path: '/minhas-viagens'
+    icon: ArrowRightLeft,
+    label: 'Movimentações',
+    path: '/movimentacoes'
   }, {
-    icon: DollarSign,
-    label: 'Orçamento',
-    path: '/orcamento'
+    icon: MapPin,
+    label: 'Localizações',
+    path: '/localizacoes'
   }, {
-    icon: TrendingUp,
-    label: 'Análises',
-    path: '/analises'
+    icon: FileText,
+    label: 'Relatórios',
+    path: '/relatorios'
   }];
-
   const sistemaItems = [];
   console.log('Profile in sidebar:', profile);
   console.log('Profile role:', profile?.role);
   if (profile?.role === 'admin') {
     console.log('User is admin - showing admin menu items');
     sistemaItems.push({
-      icon: BookOpen,
-      label: 'Legislação',
-      path: '/legislacao'
+      icon: Settings,
+      label: 'Configurações',
+      path: '/configuracoes'
     }, {
       icon: BarChart3,
       label: 'Estatísticas',
       path: '/estatisticas'
     }, {
-      icon: Settings,
-      label: 'Configurações',
-      path: '/configuracoes'
+      icon: Users,
+      label: 'Usuários',
+      path: '/usuarios'
     });
   } else {
     console.log('User is not admin or profile not loaded');
@@ -70,11 +60,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
       <a 
         href={item.path}
         className={cn(
-          "flex items-center w-full text-left space-x-3 px-4 py-3 rounded-full text-sm transition-all duration-200 group mx-2",
+          "flex items-center w-full text-left space-x-3 px-4 py-2.5 rounded-md text-sm transition-all duration-200 group",
           isActive 
-            ? "bg-green-500 text-white shadow-lg" 
-            : "text-slate-300 hover:bg-slate-700 hover:text-white",
-          isCollapsed && "justify-center px-2 mx-1 rounded-lg"
+            ? "bg-green-600 text-white" 
+            : "text-white hover:bg-slate-700 hover:text-white",
+          isCollapsed && "justify-center px-2"
         )}
         title={isCollapsed ? item.label : undefined}
       >
@@ -129,9 +119,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         </div>
 
         <div className="mt-4">
-          <SectionTitle title="VIAGENS" />
+          <SectionTitle title="PATRIMÔNIO" />
           <div className={cn("space-y-1", isCollapsed && "px-1")}>
-            {viagensItems.map(item => (
+            {patrimonioItems.map(item => (
               <MenuItem 
                 key={item.path} 
                 item={item} 
