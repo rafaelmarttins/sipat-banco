@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Home, Computer, ArrowRightLeft, FileText, Settings, BarChart3, Users, HelpCircle, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Home, Computer, ArrowRightLeft, FileText, Settings, BarChart3, Users, HelpCircle, MapPin, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface SidebarProps {
@@ -10,7 +10,7 @@ interface SidebarProps {
 }
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
-  const { profile } = useAuth();
+  const { profile, logout } = useAuth();
   const principalItems = [{
     icon: Home,
     label: 'Dashboard',
@@ -54,11 +54,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
   } else {
     console.log('User is not admin or profile not loaded');
   }
-  const suporteItems = [{
-    icon: HelpCircle,
-    label: 'Ajuda',
-    path: '/ajuda'
-  }];
   const MenuItem = ({ item, isActive }: { item: any; isActive: boolean }) => {
     const Icon = item.icon;
     return (
@@ -170,16 +165,39 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
           </div>
         )}
 
-        <div className="mt-6">
-          <SectionTitle title="SUPORTE" />
-          <div className={cn("px-2 space-y-1", isCollapsed && "px-1")}>
-            {suporteItems.map(item => (
-              <MenuItem 
-                key={item.path} 
-                item={item} 
-                isActive={location.pathname === item.path} 
-              />
-            ))}
+        {/* Botões de Ajuda e Sair */}
+        <div className="mt-6 px-3">
+          <div className="bg-slate-700/30 rounded-lg p-3 space-y-2">
+            <a 
+              href="/ajuda"
+              className={cn(
+                "flex items-center w-full text-left space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 group",
+                location.pathname === '/ajuda'
+                  ? "bg-green-600 text-white" 
+                  : "text-white hover:bg-slate-600 hover:text-white",
+                isCollapsed && "justify-center px-2"
+              )}
+              title={isCollapsed ? 'Ajuda' : undefined}
+            >
+              <HelpCircle className={cn("w-4 h-4 flex-shrink-0", isCollapsed && "w-5 h-5")} />
+              <span className={cn("transition-all duration-200", isCollapsed && "sr-only")}>
+                Ajuda
+              </span>
+            </a>
+            
+            <button
+              onClick={logout}
+              className={cn(
+                "flex items-center w-full text-left space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 group text-red-400 hover:bg-red-500/20 hover:text-red-300",
+                isCollapsed && "justify-center px-2"
+              )}
+              title={isCollapsed ? 'Sair' : undefined}
+            >
+              <LogOut className={cn("w-4 h-4 flex-shrink-0", isCollapsed && "w-5 h-5")} />
+              <span className={cn("transition-all duration-200", isCollapsed && "sr-only")}>
+                Sair
+              </span>
+            </button>
           </div>
         </div>
       </nav>
