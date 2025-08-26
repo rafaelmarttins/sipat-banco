@@ -21,7 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <span>SIPAT © 2025 CEGIT • Diretoria de Tecnologia</span>
             <div className="flex items-center space-x-4">
               <span>Desenvolvido por <a href="https://www.linkedin.com/in/rafaamartins/" target="_blank" rel="noopener noreferrer" className="hover:underline">Rafael Martins</a></span>
-              <span className="text-xs opacity-70">v0.3.3</span>
+              <span className="text-xs opacity-70">v0.1.3</span>
             </div>
           </div>
         </footer>

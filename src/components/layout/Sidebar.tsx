@@ -186,7 +186,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
       {/* Rodapé */}
       <div className="border-t border-slate-700 mt-auto">
         <div className={cn("px-4 py-2 text-xs text-slate-500", isCollapsed && "px-2 text-center")}>
-          {isCollapsed ? "v1.0" : "v1.0 - Atualizado"}
+          {isCollapsed ? "v0.1.3" : "v0.1.3"}
         </div>
       </div>
     </div>
