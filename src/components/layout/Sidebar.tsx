@@ -76,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
     );
   };
   const SectionTitle = ({ title }: { title: string }) => (
-    <div className={cn("px-4 py-2", isCollapsed && "px-2")}>
+    <div className={cn("py-2", isCollapsed && "px-2")}>
       {!isCollapsed && (
         <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wider">
           {title}
@@ -104,30 +104,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         )}
       </button>
 
-      {/* Header do Sidebar */}
-      <div className={cn("p-4 border-b border-slate-700", isCollapsed && "px-2")}>
-        <div className={cn("flex items-center space-x-3", isCollapsed && "justify-center space-x-0")}>
-          <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center flex-shrink-0">
-            <Computer className="w-5 h-5" />
-          </div>
-          {!isCollapsed && (
-            <div>
-              <h2 className="font-bold text-sm">SIPAT</h2>
-              <p className="text-xs text-slate-400">Sistema de Patrimônio</p>
-            </div>
-          )}
-        </div>
-        {!isCollapsed && (
-          <div className="mt-3 text-xs text-slate-400">
-            Município de Chapadão do Sul - MS
-          </div>
-        )}
-      </div>
 
       {/* Menu Principal */}
-      <nav className="flex-1 py-4 overflow-y-auto">
+      <nav className="flex-1 py-6 px-3">{/* Removido overflow-y-auto */}
         <SectionTitle title="PRINCIPAL" />
-        <div className={cn("px-2 space-y-1", isCollapsed && "px-1")}>
+        <div className={cn("space-y-1", isCollapsed && "px-1")}>
           {principalItems.map(item => (
             <MenuItem 
               key={item.path} 
@@ -137,9 +118,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
           ))}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <SectionTitle title="PATRIMÔNIO" />
-          <div className={cn("px-2 space-y-1", isCollapsed && "px-1")}>
+          <div className={cn("space-y-1", isCollapsed && "px-1")}>
             {patrimonioItems.map(item => (
               <MenuItem 
                 key={item.path} 
@@ -151,9 +132,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         </div>
 
         {sistemaItems.length > 0 && (
-          <div className="mt-6">
+          <div className="mt-4">
             <SectionTitle title="SISTEMA" />
-            <div className={cn("px-2 space-y-1", isCollapsed && "px-1")}>
+            <div className={cn("space-y-1", isCollapsed && "px-1")}>
               {sistemaItems.map(item => (
                 <MenuItem 
                   key={item.path} 
@@ -166,7 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         )}
 
         {/* Botões de Ajuda e Sair */}
-        <div className="mt-6 px-3">
+        <div className="mt-4">
           <div className="bg-slate-700/30 rounded-lg p-3 space-y-2">
             <a 
               href="/ajuda"
