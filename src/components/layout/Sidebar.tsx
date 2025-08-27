@@ -60,11 +60,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
       <a 
         href={item.path}
         className={cn(
-          "flex items-center w-full text-left space-x-3 px-4 py-2.5 rounded-md text-sm transition-all duration-200 group",
+          "flex items-center w-full text-left space-x-3 py-3 px-4 rounded-full text-sm font-medium transition-all duration-200 group mb-1",
           isActive 
-            ? "bg-green-600 text-white" 
-            : "text-white hover:bg-slate-700 hover:text-white",
-          isCollapsed && "justify-center px-2"
+            ? "bg-green-500 text-white shadow-lg" 
+            : "text-slate-300 hover:bg-slate-700/50 hover:text-white",
+          isCollapsed && "justify-center px-2 rounded-lg"
         )}
         title={isCollapsed ? item.label : undefined}
       >
@@ -106,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
 
 
       {/* Menu Principal */}
-      <nav className="flex-1 py-6 px-3">{/* Removido overflow-y-auto */}
+      <nav className="flex-1 py-6 px-3 flex flex-col">{/* Removido overflow-y-auto */}
         <SectionTitle title="PRINCIPAL" />
         <div className={cn("space-y-1", isCollapsed && "px-1")}>
           {principalItems.map(item => (
@@ -118,7 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
           ))}
         </div>
 
-        <div className="mt-4">
+        <div className="mt-6">
           <SectionTitle title="PATRIMÔNIO" />
           <div className={cn("space-y-1", isCollapsed && "px-1")}>
             {patrimonioItems.map(item => (
@@ -132,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         </div>
 
         {sistemaItems.length > 0 && (
-          <div className="mt-4">
+          <div className="mt-6">
             <SectionTitle title="SISTEMA" />
             <div className={cn("space-y-1", isCollapsed && "px-1")}>
               {sistemaItems.map(item => (
@@ -147,15 +147,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         )}
 
         {/* Botões de Ajuda e Sair */}
-        <div className="mt-4">
-          <div className="bg-slate-700/30 rounded-lg p-3 space-y-2">
+        <div className="mt-auto">
+          <div className="bg-slate-700/30 rounded-xl p-4 space-y-2 mx-3">
             <a 
               href="/ajuda"
               className={cn(
-                "flex items-center w-full text-left space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 group",
+                "flex items-center w-full text-left space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group",
                 location.pathname === '/ajuda'
-                  ? "bg-green-600 text-white" 
-                  : "text-white hover:bg-slate-600 hover:text-white",
+                  ? "bg-green-500 text-white shadow-lg" 
+                  : "text-slate-300 hover:bg-slate-600/50 hover:text-white",
                 isCollapsed && "justify-center px-2"
               )}
               title={isCollapsed ? 'Ajuda' : undefined}
@@ -169,7 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
             <button
               onClick={logout}
               className={cn(
-                "flex items-center w-full text-left space-x-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 group text-red-400 hover:bg-red-500/20 hover:text-red-300",
+                "flex items-center w-full text-left space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group text-red-400 hover:bg-red-500/20 hover:text-red-300",
                 isCollapsed && "justify-center px-2"
               )}
               title={isCollapsed ? 'Sair' : undefined}
@@ -184,9 +184,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
       </nav>
 
       {/* Rodapé */}
-      <div className="border-t border-slate-700 mt-auto">
-        <div className={cn("px-4 py-2 text-xs text-slate-500", isCollapsed && "px-2 text-center")}>
-          {isCollapsed ? "v0.1.3" : "v0.1.3"}
+      <div className="pb-4">
+        <div className={cn("px-4 text-xs text-slate-500 text-center", isCollapsed && "px-2")}>
+          v0.1.3
         </div>
       </div>
     </div>
