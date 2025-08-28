@@ -27,8 +27,8 @@ const Header = () => {
       <div className="flex items-center justify-between">
         {/* Logo e Nome do Sistema */}
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-            <Building2 className="w-6 h-6 text-green-600" />
+          <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center shadow-lg shadow-green-600/30 transform hover:scale-105 transition-transform">
+            <Building2 className="w-6 h-6 text-white drop-shadow-lg" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-slate-800">SIPAT</h1>
