@@ -16,8 +16,6 @@ const Header = () => {
   const navigationItems = [
     { name: 'Dashboard', path: '/' },
     { name: 'Patrimônio', path: '/patrimonio' },
-    { name: 'Movimentações', path: '/movimentacoes' },
-    { name: 'Usuários', path: '/usuarios' },
     { name: 'Relatórios', path: '/relatorios' },
     { name: 'Ajuda', path: '/ajuda' },
   ];
@@ -25,7 +23,7 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="bg-green-600 px-6 py-3">
+    <header className="bg-white border-b border-slate-200 px-6 py-3">
       <div className="flex items-center justify-between">
         {/* Logo e Nome do Sistema */}
         <div className="flex items-center space-x-3">
@@ -33,8 +31,8 @@ const Header = () => {
             <Building2 className="w-6 h-6 text-green-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">SIPAT</h1>
-            <p className="text-xs text-green-100">Sistema de Patrimônio</p>
+            <h1 className="text-xl font-bold text-slate-800">SIPAT</h1>
+            <p className="text-xs text-slate-500">Sistema de Patrimônio</p>
           </div>
         </div>
 
@@ -47,7 +45,7 @@ const Header = () => {
               className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                 isActive(item.path)
                   ? 'bg-blue-500 text-white'
-                  : 'text-white hover:bg-green-500'
+                  : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
               {item.name}
@@ -57,12 +55,12 @@ const Header = () => {
 
         {/* Ações do Usuário */}
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="sm" className="text-white hover:bg-green-500">
+          <Button variant="ghost" size="sm" className="text-slate-600 hover:bg-slate-100">
             <Search className="w-5 h-5" />
           </Button>
 
           <div className="relative">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-green-500">
+            <Button variant="ghost" size="sm" className="text-slate-600 hover:bg-slate-100">
               <Bell className="w-5 h-5" />
             </Button>
             <Badge className="absolute -top-1 -right-1 w-5 h-5 text-xs bg-red-500 text-white border-white">
@@ -72,7 +70,7 @@ const Header = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-white hover:bg-green-500 h-auto p-2">
+              <Button variant="ghost" className="text-slate-600 hover:bg-slate-100 h-auto p-2">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
                   {profile?.nome?.charAt(0)}
                 </div>
