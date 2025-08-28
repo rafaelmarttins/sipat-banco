@@ -114,7 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Botões de Ajuda e Sair */}
         <div className="mt-auto">
-          <div className="bg-slate-700/30 rounded-xl p-4 space-y-2 mx-0">
+          <div className="rounded-xl p-4 space-y-2 mx-0 bg-[313e4e] bg-[#313e4e]">
             <a href="/ajuda" className={cn("flex items-center w-full text-left space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group", location.pathname === '/ajuda' ? "bg-green-500 text-white shadow-lg" : "text-slate-300 hover:bg-slate-600/50 hover:text-white", isCollapsed && "justify-center px-2")} title={isCollapsed ? 'Ajuda' : undefined}>
               <HelpCircle className={cn("w-4 h-4 flex-shrink-0", isCollapsed && "w-5 h-5")} />
               <span className={cn("transition-all duration-200", isCollapsed && "sr-only")}>
