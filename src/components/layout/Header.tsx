@@ -47,29 +47,11 @@ const Header = () => {
             <a
               key={item.name}
               href={item.path}
-              className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+              className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                 isActive(item.path)
                   ? 'bg-blue-500 text-white'
-                  : 'text-slate-600 hover:text-slate-800 hover:transform hover:scale-105'
+                  : 'text-slate-600 hover:bg-slate-100'
               }`}
-              style={
-                !isActive(item.path) 
-                  ? {
-                      textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
-                      transition: 'all 0.2s ease-out'
-                    }
-                  : undefined
-              }
-              onMouseEnter={(e) => {
-                if (!isActive(item.path)) {
-                  e.currentTarget.style.textShadow = '2px 2px 4px rgba(0,0,0,0.3)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive(item.path)) {
-                  e.currentTarget.style.textShadow = '1px 1px 2px rgba(0,0,0,0.1)';
-                }
-              }}
             >
               {item.name}
             </a>
