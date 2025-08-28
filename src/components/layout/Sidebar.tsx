@@ -86,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     </div>;
   return <div className={cn("bg-slate-800 text-white h-screen flex flex-col transition-all duration-300 relative", isCollapsed ? "w-16" : "w-56")}>
       {/* Botão para recolher/expandir */}
-      <button onClick={() => setIsCollapsed(!isCollapsed)} className="absolute -right-3 top-6 w-6 h-6 rounded-full bg-white border-2 border-slate-800 text-slate-800 hover:bg-slate-100 transition-all duration-200 flex items-center justify-center shadow-md z-10">
+      <button onClick={() => setIsCollapsed(!isCollapsed)} className="absolute -right-3 top-6 w-6 h-6 rounded-full bg-white border-2 border-slate-800 text-slate-800 hover:bg-slate-100 transition-all duration-200 flex items-center justify-center shadow-md z-10 py-0 my-[80px]">
         {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
       </button>
 
