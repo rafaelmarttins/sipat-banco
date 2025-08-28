@@ -20,7 +20,12 @@ const Header = () => {
     { name: 'Ajuda', path: '/ajuda' },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname === '/dashboard';
+    }
+    return location.pathname === path;
+  };
 
   return (
     <header className="bg-white border-b border-slate-200 px-6 py-3">
