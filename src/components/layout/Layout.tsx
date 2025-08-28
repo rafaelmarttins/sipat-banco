@@ -1,20 +1,18 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-
 interface LayoutProps {
   children: React.ReactNode;
 }
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({
+  children
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+  return <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <div className="flex-1 flex flex-col">
         <Header />
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-6 overflow-y-auto bg-[ebeff6] bg-[#ebeff6]">{children}</main>
         <footer className="relative overflow-hidden bg-gradient-to-br from-background via-muted/30 to-background border-t border-border/50 backdrop-blur-sm">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5"></div>
           <div className="relative mx-auto max-w-7xl px-6 py-4">
@@ -35,12 +33,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               
               <div className="flex items-center gap-3 text-sm">
                 <span className="text-muted-foreground">Desenvolvido por</span>
-                <a 
-                  href="https://www.linkedin.com/in/rafaamartins/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group relative inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 text-foreground font-medium transition-all duration-300 hover:from-primary/20 hover:to-accent/20 hover:scale-105 border border-primary/20 hover:border-primary/40"
-                >
+                <a href="https://www.linkedin.com/in/rafaamartins/" target="_blank" rel="noopener noreferrer" className="group relative inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 text-foreground font-medium transition-all duration-300 hover:from-primary/20 hover:to-accent/20 hover:scale-105 border border-primary/20 hover:border-primary/40">
                   <span className="relative z-10">Rafael Martins</span>
                   <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </a>
@@ -49,8 +42,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </footer>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Layout;
