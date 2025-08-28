@@ -54,17 +54,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
   } else {
     console.log('User is not admin or profile not loaded');
   }
-  const MenuItem = ({ item, isActive }: { item: any; isActive: boolean }) => {
+  const MenuItem = ({ item, isActive, special = false }: { item: any; isActive: boolean; special?: boolean }) => {
     const Icon = item.icon;
     return (
       <a 
         href={item.path}
         className={cn(
-          "flex items-center w-full text-left space-x-3 py-3 px-4 rounded-full text-sm font-medium transition-all duration-200 group mb-1",
-          isActive 
+          "flex items-center w-full text-left space-x-3 py-2.5 px-3 rounded-lg text-sm font-medium transition-all duration-200 group mb-1",
+          special && isActive
             ? "bg-green-500 text-white shadow-lg" 
+            : isActive 
+            ? "bg-slate-700/70 text-white" 
             : "text-slate-300 hover:bg-slate-700/50 hover:text-white",
-          isCollapsed && "justify-center px-2 rounded-lg"
+          isCollapsed && "justify-center px-2"
         )}
         title={isCollapsed ? item.label : undefined}
       >
@@ -139,7 +141,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
                 <MenuItem 
                   key={item.path} 
                   item={item} 
-                  isActive={location.pathname === item.path} 
+                  isActive={location.pathname === item.path}
+                  special={item.path === '/configuracoes'}
                 />
               ))}
             </div>
@@ -147,45 +150,43 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
         )}
 
         {/* Botões de Ajuda e Sair */}
-        <div className="mt-auto">
-          <div className="bg-slate-700/30 rounded-xl p-4 space-y-2 mx-3">
-            <a 
-              href="/ajuda"
-              className={cn(
-                "flex items-center w-full text-left space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group",
-                location.pathname === '/ajuda'
-                  ? "bg-green-500 text-white shadow-lg" 
-                  : "text-slate-300 hover:bg-slate-600/50 hover:text-white",
-                isCollapsed && "justify-center px-2"
-              )}
-              title={isCollapsed ? 'Ajuda' : undefined}
-            >
-              <HelpCircle className={cn("w-4 h-4 flex-shrink-0", isCollapsed && "w-5 h-5")} />
-              <span className={cn("transition-all duration-200", isCollapsed && "sr-only")}>
-                Ajuda
-              </span>
-            </a>
-            
-            <button
-              onClick={logout}
-              className={cn(
-                "flex items-center w-full text-left space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group text-red-400 hover:bg-red-500/20 hover:text-red-300",
-                isCollapsed && "justify-center px-2"
-              )}
-              title={isCollapsed ? 'Sair' : undefined}
-            >
-              <LogOut className={cn("w-4 h-4 flex-shrink-0", isCollapsed && "w-5 h-5")} />
-              <span className={cn("transition-all duration-200", isCollapsed && "sr-only")}>
-                Sair
-              </span>
-            </button>
-          </div>
+        <div className="mt-auto px-3 space-y-2">
+          <a 
+            href="/ajuda"
+            className={cn(
+              "flex items-center w-full text-left space-x-3 py-2.5 px-3 rounded-lg text-sm font-medium transition-all duration-200 group",
+              location.pathname === '/ajuda'
+                ? "bg-slate-700/70 text-white" 
+                : "text-slate-300 hover:bg-slate-700/50 hover:text-white",
+              isCollapsed && "justify-center px-2"
+            )}
+            title={isCollapsed ? 'Ajuda' : undefined}
+          >
+            <HelpCircle className={cn("w-4 h-4 flex-shrink-0", isCollapsed && "w-5 h-5")} />
+            <span className={cn("transition-all duration-200", isCollapsed && "sr-only")}>
+              Ajuda
+            </span>
+          </a>
+          
+          <button
+            onClick={logout}
+            className={cn(
+              "flex items-center w-full text-left space-x-3 py-2.5 px-3 rounded-lg text-sm font-medium transition-all duration-200 group text-red-400 hover:bg-red-500/20 hover:text-red-300",
+              isCollapsed && "justify-center px-2"
+            )}
+            title={isCollapsed ? 'Sair' : undefined}
+          >
+            <LogOut className={cn("w-4 h-4 flex-shrink-0", isCollapsed && "w-5 h-5")} />
+            <span className={cn("transition-all duration-200", isCollapsed && "sr-only")}>
+              Sair
+            </span>
+          </button>
         </div>
       </nav>
 
       {/* Rodapé */}
       <div className="pb-4">
-        <div className={cn("px-4 text-xs text-slate-500 text-center", isCollapsed && "px-2")}>
+        <div className={cn("px-3 text-xs text-slate-500 text-center", isCollapsed && "px-2")}>
           v0.1.3
         </div>
       </div>
