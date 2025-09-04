@@ -47,10 +47,10 @@ const Header = () => {
             <a
               key={item.name}
               href={item.path}
-              className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                 isActive(item.path)
-                  ? 'bg-blue-500 text-white'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-blue-500 text-white font-bold'
+                  : 'text-slate-600 hover:font-bold'
               }`}
             >
               {item.name}
@@ -60,12 +60,12 @@ const Header = () => {
 
         {/* Ações do Usuário */}
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="sm" className="text-slate-600 hover:bg-slate-100">
+          <Button variant="ghost" size="sm" className="text-slate-600 transition-all duration-200 hover:font-bold hover:text-slate-800">
             <Search className="w-5 h-5" />
           </Button>
 
           <div className="relative">
-            <Button variant="ghost" size="sm" className="text-slate-600 hover:bg-slate-100">
+            <Button variant="ghost" size="sm" className="text-slate-600 transition-all duration-200 hover:font-bold hover:text-slate-800">
               <Bell className="w-5 h-5" />
             </Button>
             <Badge className="absolute -top-1 -right-1 w-5 h-5 text-xs bg-red-500 text-white border-white">
@@ -75,7 +75,7 @@ const Header = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-slate-600 hover:bg-slate-100 h-auto p-2">
+              <Button variant="ghost" className="text-slate-600 transition-all duration-200 hover:font-bold hover:text-slate-800 h-auto p-2">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
                   {profile?.nome?.charAt(0)}
                 </div>
