@@ -1,23 +1,44 @@
 
 import React, { useState } from 'react';
-import { Bell, LogOut, Key, Building2, Search } from 'lucide-react';
+import { 
+  Bell, 
+  LogOut, 
+  Key, 
+  Building2, 
+  Search, 
+  Settings,
+  User,
+  Menu,
+  X
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import ChangePasswordModal from '@/components/modals/ChangePasswordModal';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const { profile, logout } = useAuth();
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navigationItems = [
-    { name: 'Dashboard', path: '/' },
-    { name: 'Patrimônio', path: '/patrimonio' },
-    { name: 'Relatórios', path: '/relatorios' },
-    { name: 'Ajuda', path: '/ajuda' },
+    { id: 'dashboard', name: 'Dashboard', path: '/' },
+    { id: 'patrimonio', name: 'Patrimônio', path: '/patrimonio' },
+    { id: 'movimentacoes', name: 'Movimentações', path: '/movimentacoes' },
+    { id: 'usuarios', name: 'Usuários', path: '/usuarios' },
+    { id: 'localizacoes', name: 'Localizações', path: '/localizacoes' },
+    { id: 'estatisticas', name: 'Estatísticas', path: '/estatisticas' },
+    { id: 'relatorios', name: 'Relatórios', path: '/relatorios' },
+    { id: 'configuracoes', name: 'Configurações', path: '/configuracoes' },
+    { id: 'ajuda', name: 'Ajuda', path: '/ajuda' },
   ];
 
   const isActive = (path: string) => {
@@ -27,85 +48,193 @@ const Header = () => {
     return location.pathname === path;
   };
 
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setMobileMenuOpen(false);
+  };
+
   return (
-    <header className="bg-white border-b border-slate-200 px-6 py-3">
-      <div className="flex items-center justify-between">
-        {/* Logo e Nome do Sistema */}
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center shadow-lg shadow-green-600/30 transform hover:scale-105 transition-transform">
-            <Building2 className="w-6 h-6 text-white drop-shadow-lg" />
+    <TooltipProvider>
+      <header className="h-20 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex flex-col justify-center px-6 shadow-sm backdrop-blur-xl sticky top-0 z-50">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center space-x-3 group">
+            <div className="bg-gradient-to-br from-green-400 to-green-600 p-3 rounded-2xl shadow-lg shadow-green-600/30 hover:scale-105 transition-all duration-300">
+              <Building2 className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+                SIPAT
+              </h1>
+              <p className="text-xs text-slate-500">Sistema de Patrimônio</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-slate-800">SIPAT</h1>
-            <p className="text-xs text-slate-500">Sistema de Patrimônio</p>
-          </div>
-        </div>
 
-        {/* Navegação Central */}
-        <nav className="flex items-center space-x-1">
-          {navigationItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.path}
-              className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
-                isActive(item.path)
-                  ? 'bg-blue-500 text-white font-bold'
-                  : 'text-slate-600 hover:font-bold'
-              }`}
-            >
-              {item.name}
-            </a>
-          ))}
-        </nav>
+          {/* Navegação principal centralizada - Desktop */}
+          <nav className="hidden lg:flex items-center space-x-2 flex-1 justify-center">
+            {navigationItems.slice(0, 5).map((item) => (
+              <Button 
+                key={item.id}
+                variant={isActive(item.path) ? "default" : "ghost"}
+                className={`text-sm font-medium px-6 py-3 rounded-full transition-all duration-300 ${
+                  isActive(item.path) 
+                    ? 'bg-blue-500 text-white shadow-lg hover:shadow-xl' 
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 hover:scale-105 hover:font-bold'
+                }`}
+                onClick={() => handleNavigate(item.path)}
+              >
+                {item.name}
+              </Button>
+            ))}
+          </nav>
 
-        {/* Ações do Usuário */}
-        <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="sm" className="text-slate-600 transition-all duration-200 hover:font-bold hover:text-slate-800">
-            <Search className="w-5 h-5" />
+          {/* Menu Mobile */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden h-10 w-10 rounded-full hover:bg-slate-100 transition-all duration-200 hover:font-bold"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
-          <div className="relative">
-            <Button variant="ghost" size="sm" className="text-slate-600 transition-all duration-200 hover:font-bold hover:text-slate-800">
-              <Bell className="w-5 h-5" />
-            </Button>
-            <Badge className="absolute -top-1 -right-1 w-5 h-5 text-xs bg-red-500 text-white border-white">
-              3
-            </Badge>
-          </div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-slate-600 transition-all duration-200 hover:font-bold hover:text-slate-800 h-auto p-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                  {profile?.nome?.charAt(0)}
+          {/* Busca e Ações */}
+          <div className="flex items-center space-x-3">
+            {/* Campo de Busca */}
+            <div className="hidden md:flex items-center relative">
+              {searchOpen ? (
+                <div className="flex items-center space-x-2 animate-fade-in">
+                  <Input
+                    placeholder="Buscar equipamentos..."
+                    className="w-64 h-10 rounded-full border-slate-300 bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+                    autoFocus
+                    onBlur={() => setSearchOpen(false)}
+                  />
                 </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <div className="px-2 py-1.5">
-                <div className="text-sm font-medium text-slate-700">{profile?.nome}</div>
-                <div className="text-xs text-slate-500">Município de Chapadão do Sul - MS</div>
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)}>
-                <Key className="w-4 h-4 mr-2" />
-                Alterar Senha
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout} className="text-red-600">
-                <LogOut className="w-4 h-4 mr-2" />
-                Sair
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-10 w-10 rounded-full hover:bg-slate-100 transition-all duration-300 hover:scale-110 hover:font-bold"
+                      onClick={() => setSearchOpen(true)}
+                    >
+                      <Search className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Buscar (Ctrl+K)</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+
+            {/* Notificações */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="relative">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-10 w-10 rounded-full hover:bg-slate-100 transition-all duration-300 hover:scale-110 hover:font-bold relative"
+                  >
+                    <Bell className="h-5 w-5" />
+                    <Badge 
+                      variant="destructive" 
+                      className="absolute -top-1 -right-1 h-5 w-5 text-xs p-0 flex items-center justify-center rounded-full animate-pulse"
+                    >
+                      3
+                    </Badge>
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Notificações (3 novas)</p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Perfil do usuário */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:scale-110 transition-all duration-300">
+                  <Avatar className="h-10 w-10 border-2 border-blue-500/20 shadow-md">
+                    <AvatarImage src="/placeholder-avatar.jpg" alt="Usuário" />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-semibold">
+                      {profile?.nome?.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() || 'US'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80 bg-white/95 backdrop-blur-xl border-slate-200 shadow-xl">
+                <div className="p-4 border-b border-slate-200">
+                  <div className="flex items-center space-x-3">
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      <AvatarImage src="/placeholder-avatar.jpg" alt="Usuário" />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white font-semibold">
+                        {profile?.nome?.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() || 'US'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-slate-800 truncate">{profile?.nome || 'Usuário'}</p>
+                      <p className="text-sm text-slate-600 truncate">{profile?.email || 'usuario@exemplo.com'}</p>
+                      <p className="text-xs text-slate-500 truncate">Município de Chapadão do Sul - MS</p>
+                    </div>
+                  </div>
+                </div>
+                <DropdownMenuItem onClick={() => handleNavigate('/configuracoes')} className="p-3 cursor-pointer hover:bg-slate-50">
+                  <Settings className="h-4 w-4 mr-3" />
+                  <span>Configurações</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)} className="p-3 cursor-pointer hover:bg-slate-50">
+                  <Key className="h-4 w-4 mr-3" />
+                  <span>Alterar Senha</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="p-3 cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50">
+                  <LogOut className="h-4 w-4 mr-3" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </div>
-      
-      <ChangePasswordModal 
-        open={isChangePasswordOpen}
-        onOpenChange={setIsChangePasswordOpen}
-      />
-    </header>
+
+        {/* Menu Mobile */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute top-20 left-0 right-0 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-lg animate-fade-in">
+            <nav className="p-4 space-y-2">
+              {navigationItems.map((item) => (
+                <Button
+                  key={item.id}
+                  variant={isActive(item.path) ? "default" : "ghost"}
+                  className={`w-full justify-start text-left rounded-xl transition-all duration-300 ${
+                    isActive(item.path) 
+                      ? 'bg-blue-500 text-white shadow-lg' 
+                      : 'hover:bg-slate-100'
+                  }`}
+                  onClick={() => handleNavigate(item.path)}
+                >
+                  {item.name}
+                </Button>
+              ))}
+              <div className="pt-4 border-t border-slate-200">
+                <Input
+                  placeholder="Buscar equipamentos..."
+                  className="w-full rounded-xl"
+                />
+              </div>
+            </nav>
+          </div>
+        )}
+        
+        <ChangePasswordModal 
+          open={isChangePasswordOpen}
+          onOpenChange={setIsChangePasswordOpen}
+        />
+      </header>
+    </TooltipProvider>
   );
 };
 
