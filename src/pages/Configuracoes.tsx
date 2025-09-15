@@ -28,8 +28,8 @@ const iconComponents = {
 
 const Configuracoes = () => {
   const { profile } = useAuth();
-  const { tipos, loading, deleteTipo } = useTiposEquipamento();
-  const { secretarias, loading: loadingSecretarias, deleteSecretaria } = useSecretarias();
+  const { tipos, loading, deleteTipo, refetch: refetchTipos } = useTiposEquipamento();
+  const { secretarias, loading: loadingSecretarias, deleteSecretaria, fetchSecretarias } = useSecretarias();
   const [tipoModalOpen, setTipoModalOpen] = useState(false);
   const [secretariaModalOpen, setSecretariaModalOpen] = useState(false);
   const [selectedSecretaria, setSelectedSecretaria] = useState<any>(null);
@@ -42,12 +42,12 @@ const Configuracoes = () => {
     return iconComponents[iconeName as keyof typeof iconComponents];
   };
 
-  const handleTipoModalSubmit = () => {
-    // Refresh será feito automaticamente pelo hook
+  const handleTipoModalSubmit = async () => {
+    await refetchTipos();
   };
 
-  const handleSecretariaModalSubmit = () => {
-    // Refresh será feito automaticamente pelo hook
+  const handleSecretariaModalSubmit = async () => {
+    await fetchSecretarias();
   };
 
   const handleEditSecretaria = (secretaria: any) => {

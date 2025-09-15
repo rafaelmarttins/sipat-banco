@@ -21,7 +21,7 @@ import { useEquipamentos, Equipamento } from '@/hooks/useEquipamentos';
 
 const Patrimonio = () => {
   const { profile } = useAuth();
-  const { equipamentos, loading, toggleStatusEquipamento, updateEquipamento } = useEquipamentos();
+  const { equipamentos, loading, toggleStatusEquipamento, updateEquipamento, fetchEquipamentos } = useEquipamentos();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSetor, setFilterSetor] = useState('all');
   const [filterTipo, setFilterTipo] = useState('all');
@@ -56,8 +56,8 @@ const Patrimonio = () => {
     return matchSearch && matchTipo && matchEstado && matchStatus && matchDataInicio && matchDataFim;
   });
 
-  const handleAddEquipamento = () => {
-    // Recarrega a lista após adicionar equipamento
+  const handleAddEquipamento = async () => {
+    await fetchEquipamentos();
     setIsFormOpen(false);
   };
 
