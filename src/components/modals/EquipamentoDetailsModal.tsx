@@ -87,6 +87,11 @@ const EquipamentoDetailsModal: React.FC<EquipamentoDetailsModalProps> = ({
             </div>
           </div>
 
+          <div>
+            <label className="text-sm font-medium text-gray-500">Secretaria</label>
+            <p className="text-sm">{equipamento.secretaria?.nome || 'N/A'}</p>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-500">Data de Cadastro</label>
