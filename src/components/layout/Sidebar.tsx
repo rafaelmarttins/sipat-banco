@@ -119,13 +119,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Conteúdo da sidebar */}
       <div className="flex-1 flex flex-col min-h-0 pt-6">
-        {/* Menu Sections */}
-        <nav className="flex-1 px-3 space-y-2">
+        {/* Menu Sections com scroll */}
+        <nav className="flex-1 px-3 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-sidebar-accent/20 scrollbar-track-transparent">
           {menuSections.map(renderSection)}
         </nav>
 
-        {/* Área inferior com Ajuda e Log out */}
-        <div className="p-3 mt-auto space-y-2">
+        {/* Área inferior com Ajuda e Log out - sempre visível */}
+        <div className="p-3 mt-auto space-y-2 flex-shrink-0">
           <div className="bg-muted/10 rounded-2xl p-3 space-y-2">
             <Button
               variant="ghost"
