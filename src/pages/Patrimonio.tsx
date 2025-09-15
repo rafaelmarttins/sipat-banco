@@ -333,9 +333,8 @@ const Patrimonio = () => {
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
                                     <Button 
-                                      variant="outline" 
+                                      variant="ghost" 
                                       size="sm"
-                                      className={equipamento.status === 'Ativo' ? 'hover:bg-red-50' : 'hover:bg-green-50'}
                                     >
                                       <Trash2 className="w-4 h-4" />
                                     </Button>
