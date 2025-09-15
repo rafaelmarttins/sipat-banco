@@ -54,8 +54,9 @@ export const useSecretarias = () => {
         return null;
       }
 
+      // Atualização automática do estado - adiciona o novo registro no início da lista
+      setSecretarias(prev => [data as Secretaria, ...prev.filter(s => s.id !== data.id)]);
       toast.success('Secretaria adicionada com sucesso!');
-      await fetchSecretarias();
       return data;
     } catch (error) {
       console.error('Erro ao adicionar secretaria:', error);
@@ -66,10 +67,12 @@ export const useSecretarias = () => {
 
   const updateSecretaria = async (id: string, updates: Partial<Secretaria>) => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('secretarias')
         .update(updates)
-        .eq('id', id);
+        .eq('id', id)
+        .select()
+        .single();
 
       if (error) {
         console.error('Erro ao atualizar secretaria:', error);
@@ -77,8 +80,10 @@ export const useSecretarias = () => {
         return;
       }
 
+      // Atualização automática do estado - atualiza apenas o registro modificado
+      setSecretarias(prev => prev.map(s => s.id === id ? data as Secretaria : s));
       toast.success('Secretaria atualizada com sucesso!');
-      await fetchSecretarias();
+      return data;
     } catch (error) {
       console.error('Erro ao atualizar secretaria:', error);
       toast.error('Erro ao atualizar secretaria');
@@ -98,8 +103,10 @@ export const useSecretarias = () => {
         return;
       }
 
+      // Atualização automática do estado - remove o registro da lista
+      setSecretarias(prev => prev.filter(s => s.id !== id));
       toast.success('Secretaria removida com sucesso!');
-      await fetchSecretarias();
+      return { success: true };
     } catch (error) {
       console.error('Erro ao deletar secretaria:', error);
       toast.error('Erro ao deletar secretaria');
