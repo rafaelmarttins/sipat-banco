@@ -53,45 +53,6 @@ export const useUsuarios = () => {
     }
   };
 
-  const addUsuario = async (userData: { nome: string; email: string; role: 'admin' | 'user'; setor: string; localizacao?: string; password_reset_required?: boolean }) => {
-    try {
-      if (profile?.role !== 'admin') {
-        throw new Error('Acesso negado. Apenas administradores podem criar usuários.');
-      }
-
-      // Gerar um ID único para o novo usuário
-      const userRecord = {
-        id: crypto.randomUUID(),
-        ...userData
-      };
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert([userRecord])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Atualização automática do estado - adiciona o novo registro no início da lista
-      setUsuarios(prev => [data as Usuario, ...prev]);
-      toast({
-        title: "Sucesso",
-        description: "Usuário criado com sucesso.",
-      });
-      
-      return { success: true, data };
-    } catch (error: any) {
-      console.error('Erro ao criar usuário:', error);
-      toast({
-        title: "Erro",
-        description: error.message || "Não foi possível criar o usuário.",
-        variant: "destructive",
-      });
-      return { success: false, error: error.message };
-    }
-  };
-
   const updateUsuario = async (id: string, updates: Partial<Usuario>) => {
     try {
       if (profile?.role !== 'admin') {
@@ -199,7 +160,6 @@ export const useUsuarios = () => {
     usuarios,
     loading,
     fetchUsuarios,
-    addUsuario,
     updateUsuario,
     deleteUsuario,
     resetPasswordViaEmail
