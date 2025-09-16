@@ -107,27 +107,21 @@ const Configuracoes = () => {
                 {loadingSecretarias ? (
                   <p>Carregando secretarias...</p>
                 ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Descrição</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Criado em</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Nome</TableHead>
+                            <TableHead>Descrição</TableHead>
+                            <TableHead>Criado em</TableHead>
+                            <TableHead className="text-right">Ações</TableHead>
+                          </TableRow>
+                        </TableHeader>
                     <TableBody>
                       {secretarias.map((secretaria) => (
                         <TableRow key={secretaria.id}>
                           <TableCell className="font-medium">{secretaria.nome}</TableCell>
                           <TableCell className="max-w-xs truncate">
                             {secretaria.descricao || '-'}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={secretaria.ativo ? "default" : "secondary"}>
-                              {secretaria.ativo ? "Ativo" : "Inativo"}
-                            </Badge>
                           </TableCell>
                           <TableCell>
                             {new Date(secretaria.created_at).toLocaleDateString('pt-BR')}
@@ -156,7 +150,10 @@ const Configuracoes = () => {
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => deleteSecretaria(secretaria.id)}>
+                                    <AlertDialogAction 
+                                      onClick={() => deleteSecretaria(secretaria.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
                                       Excluir
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
@@ -193,16 +190,15 @@ const Configuracoes = () => {
                 {loading ? (
                   <p>Carregando tipos...</p>
                 ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Ícone</TableHead>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Criado em</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Ícone</TableHead>
+                          <TableHead>Nome</TableHead>
+                          <TableHead>Criado em</TableHead>
+                          <TableHead className="text-right">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
                     <TableBody>
                       {tipos.map((tipo) => {
                         const IconComponent = getIconComponent(tipo.icone);
@@ -212,11 +208,6 @@ const Configuracoes = () => {
                               <IconComponent className="w-5 h-5" />
                             </TableCell>
                             <TableCell className="font-medium">{tipo.nome}</TableCell>
-                            <TableCell>
-                              <Badge variant={tipo.ativo ? "default" : "secondary"}>
-                                {tipo.ativo ? "Ativo" : "Inativo"}
-                              </Badge>
-                            </TableCell>
                             <TableCell>
                               {new Date(tipo.created_at).toLocaleDateString('pt-BR')}
                             </TableCell>
@@ -236,7 +227,10 @@ const Configuracoes = () => {
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => deleteTipo(tipo.id)}>
+                                    <AlertDialogAction 
+                                      onClick={() => deleteTipo(tipo.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
                                       Excluir
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
