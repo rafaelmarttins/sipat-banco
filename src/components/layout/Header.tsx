@@ -453,7 +453,7 @@ const Header = () => {
                     </div>
                   </div>
                 </div>
-                <DropdownMenuItem className="p-3 cursor-pointer">
+                <DropdownMenuItem onClick={() => navigate('/perfil')} className="p-3 cursor-pointer">
                   <User className="h-4 w-4 mr-3" />
                   <span>Meu Perfil</span>
                 </DropdownMenuItem>
