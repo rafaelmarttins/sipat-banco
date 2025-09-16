@@ -16,6 +16,7 @@ import Configuracoes from "@/pages/Configuracoes";
 import Estatisticas from "@/pages/Estatisticas";
 import Usuarios from "@/pages/Usuarios";
 import Ajuda from "@/pages/Ajuda";
+import Perfil from "@/pages/Perfil";
 
 const queryClient = new QueryClient();
 
@@ -98,6 +99,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Ajuda />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/perfil" 
+              element={
+                <ProtectedRoute>
+                  <Perfil />
                 </ProtectedRoute>
               } 
             />
