@@ -353,7 +353,12 @@ const Patrimonio = () => {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                      <AlertDialogAction onClick={() => handleDesactivateEquipamento(equipamento.id)}>
+                                      <AlertDialogAction 
+                                        onClick={() => handleDesactivateEquipamento(equipamento.id)}
+                                        className={equipamento.status === 'Ativo' 
+                                          ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" 
+                                          : ""}
+                                      >
                                         {equipamento.status === 'Ativo' ? 'Desativar' : 'Ativar'}
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
