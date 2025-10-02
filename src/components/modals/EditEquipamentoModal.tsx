@@ -115,33 +115,13 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="modelo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tipo/Modelo</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o tipo" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {tiposEquipamento.map((tipo) => (
-                          <SelectItem key={tipo.id} value={tipo.nome}>
-                            {tipo.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            {/* 1. Identificação do Equipamento */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 border-b pb-2">
+                Identificação do Equipamento
+              </h3>
+              
               <FormField
                 control={form.control}
                 name="patrimonio"
@@ -155,78 +135,71 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="modelo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo/Modelo</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o tipo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {tiposEquipamento.map((tipo) => (
+                            <SelectItem key={tipo.id} value={tipo.nome}>
+                              {tipo.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="processado"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Processador/Descrição</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: Intel i5-8400..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
-            <FormField
-              control={form.control}
-              name="processado"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Processador/Descrição</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: Intel i5-8400, HP LaserJet..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="secretaria_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Secretaria</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a secretaria" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {secretarias.map((secretaria) => (
-                        <SelectItem key={secretaria.id} value={secretaria.id}>
-                          {secretaria.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="setor"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Setor</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ex: Recepção, Farmácia..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* 2. Vinculação Administrativa */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 border-b pb-2">
+                Vinculação Administrativa
+              </h3>
 
               <FormField
                 control={form.control}
-                name="localizacao"
+                name="secretaria_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Localização</FormLabel>
+                    <FormLabel>Secretaria</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione a localização" />
+                          <SelectValue placeholder="Selecione a secretaria" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {localizacoes.map((localizacao) => (
-                          <SelectItem key={localizacao.id} value={localizacao.id}>
-                            {localizacao.nome}
+                        {secretarias.map((secretaria) => (
+                          <SelectItem key={secretaria.id} value={secretaria.id}>
+                            {secretaria.nome}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -235,22 +208,84 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="setor"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Setor</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: Recepção, Farmácia..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="localizacao"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Localização</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a localização" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {localizacoes.map((localizacao) => (
+                            <SelectItem key={localizacao.id} value={localizacao.id}>
+                              {localizacao.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="aquisicao"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Data de Aquisição</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* 3. Dados Técnicos */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 border-b pb-2">
+                Dados Técnicos
+              </h3>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="aquisicao"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Data de Aquisição</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="vidaUtil"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Vida Útil</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: 5 anos, 2025-12-31..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
@@ -277,20 +312,11 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="vidaUtil"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vida Útil</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ex: 5 anos, 2025-12-31..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* 4. Status e Controle */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 border-b pb-2">
+                Status e Controle
+              </h3>
 
               <FormField
                 control={form.control}
@@ -313,30 +339,33 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
                   </FormItem>
                 )}
               />
-            </div>
 
-            <FormField
-              control={form.control}
-              name="observacoes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Observações</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Observações adicionais sobre o equipamento..."
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="observacoes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Observações</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Observações adicionais sobre o equipamento..."
+                        rows={3}
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button type="submit">Salvar Alterações</Button>
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                Salvar Alterações
+              </Button>
             </DialogFooter>
           </form>
         </Form>
