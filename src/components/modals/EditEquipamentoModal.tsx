@@ -118,7 +118,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             {/* 1. Identificação do Equipamento */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 border-b pb-2">
+              <h3 className="text-sm font-bold text-slate-700 border-b pb-2">
                 Identificação do Equipamento
               </h3>
               
@@ -180,7 +180,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
 
             {/* 2. Vinculação Administrativa */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 border-b pb-2">
+              <h3 className="text-sm font-bold text-slate-700 border-b pb-2">
                 Vinculação Administrativa
               </h3>
 
@@ -253,7 +253,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
 
             {/* 3. Dados Técnicos */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 border-b pb-2">
+              <h3 className="text-sm font-bold text-slate-700 border-b pb-2">
                 Dados Técnicos
               </h3>
 
@@ -314,7 +314,7 @@ const EditEquipamentoModal: React.FC<EditEquipamentoModalProps> = ({
 
             {/* 4. Status e Controle */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 border-b pb-2">
+              <h3 className="text-sm font-bold text-slate-700 border-b pb-2">
                 Status e Controle
               </h3>
 
