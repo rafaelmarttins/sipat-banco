@@ -92,7 +92,7 @@ const Patrimonio = () => {
   const getEstadoBadge = (estado: string) => {
     switch (estado) {
       case 'Meia-vida':
-        return <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white">Meia-vida</Badge>;
+        return <Badge className="bg-[#FFF700] hover:bg-[#E6DE00] text-black">Meia-vida</Badge>;
       case 'Fim-da-vida':
         return <Badge variant="destructive">Fim-da-vida</Badge>;
       case 'Conservado':
