@@ -26,7 +26,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import ChangePasswordModal from '@/components/modals/ChangePasswordModal';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Header = () => {
   const { profile, logout } = useAuth();
@@ -196,9 +195,6 @@ const Header = () => {
                 </Tooltip>
               )}
             </div>
-
-            {/* Alternador de Tema */}
-            <ThemeToggle />
 
             {/* Avisos Importantes */}
             <DropdownMenu>
