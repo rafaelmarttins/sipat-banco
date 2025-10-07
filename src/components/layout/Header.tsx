@@ -122,7 +122,7 @@ const Header = () => {
 
   return (
     <TooltipProvider>
-      <header className="h-20 glass border-b border-header-border flex flex-col justify-center px-6 shadow-elegant backdrop-blur-xl bg-gradient-to-r from-header/95 to-header/90 sticky top-0 z-50">
+      <header className="h-20 border-b border-border flex flex-col justify-center px-6 shadow-sm backdrop-blur-xl bg-card/95 sticky top-0 z-50">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-3 group">
@@ -130,7 +130,7 @@ const Header = () => {
               <Building2 className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-header-foreground tracking-tight font-display">
+              <h1 className="text-2xl font-bold text-foreground tracking-tight font-display">
                 SIPAT
               </h1>
               <p className="text-xs text-muted-foreground">Sistema de Patrimônio</p>
@@ -146,7 +146,7 @@ const Header = () => {
                 className={`text-sm font-medium px-6 py-3 rounded-full transition-all duration-300 ${
                   isActive(item.path)
                     ? 'bg-gradient-primary text-white shadow-blue hover:shadow-glow' 
-                    : 'text-header-foreground hover:bg-background/60 hover:text-foreground hover:scale-105 backdrop-blur-sm'
+                    : 'text-foreground hover:bg-muted/60 hover:text-foreground hover:scale-105'
                 }`}
                 onClick={() => handleNavigate(item.path)}
               >
