@@ -184,7 +184,7 @@ const Header = () => {
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      className="h-10 w-10 rounded-full hover:bg-muted/50 transition-all duration-300 hover:scale-110"
+                      className="h-10 w-10 rounded-full hover:bg-muted/50 transition-all duration-300 hover:scale-110 text-foreground hover:text-foreground"
                       onClick={() => setSearchOpen(true)}
                     >
                       <Search className="h-5 w-5" />
@@ -209,7 +209,7 @@ const Header = () => {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-10 w-10 rounded-full hover:bg-muted/50 transition-all duration-300 hover:scale-110 relative"
+                        className="h-10 w-10 rounded-full hover:bg-muted/50 transition-all duration-300 hover:scale-110 relative text-foreground hover:text-foreground"
                       >
                         <ShieldAlert className="h-5 w-5" />
                         {alerts.length > 0 && (
@@ -299,7 +299,7 @@ const Header = () => {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-10 w-10 rounded-full hover:bg-muted/50 transition-all duration-300 hover:scale-110 relative"
+                        className="h-10 w-10 rounded-full hover:bg-muted/50 transition-all duration-300 hover:scale-110 relative text-foreground hover:text-foreground"
                       >
                         <Bell className="h-5 w-5" />
                         {unreadCount > 0 && (
