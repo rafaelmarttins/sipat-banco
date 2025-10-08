@@ -375,7 +375,7 @@ const Usuarios = () => {
                     </TableRow>
                   ) : (
                     filteredUsuarios.map((usuario) => (
-                      <TableRow key={usuario.id} className="hover:bg-slate-50">
+                      <TableRow key={usuario.id} className="hover:bg-muted/50 dark:hover:bg-muted/20">
                         <TableCell className="font-medium">{usuario.nome}</TableCell>
                         <TableCell>{usuario.email}</TableCell>
                         <TableCell>{usuario.setor}</TableCell>

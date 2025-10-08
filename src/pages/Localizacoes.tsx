@@ -110,7 +110,7 @@ const Localizacoes = () => {
                     </TableRow>
                   ) : (
                     localizacoes.map((localizacao) => (
-                      <TableRow key={localizacao.id} className="hover:bg-slate-50">
+                      <TableRow key={localizacao.id} className="hover:bg-muted/50 dark:hover:bg-muted/20">
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <MapPin className="w-4 h-4 text-blue-600" />

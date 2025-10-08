@@ -295,7 +295,7 @@ const Patrimonio = () => {
                     </TableRow>
                   ) : (
                     filteredEquipamentos.map((equipamento) => (
-                      <TableRow key={equipamento.id} className="hover:bg-slate-50">
+                      <TableRow key={equipamento.id} className="hover:bg-muted/50 dark:hover:bg-muted/20">
                         <TableCell className="font-mono text-blue-600 font-bold">
                           #{equipamento.patrimonio}
                         </TableCell>

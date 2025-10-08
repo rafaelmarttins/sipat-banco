@@ -144,7 +144,7 @@ const Movimentacoes = () => {
                     </TableRow>
                   ) : (
                     filteredMovimentacoes.map((movimentacao) => (
-                      <TableRow key={movimentacao.id} className="hover:bg-slate-50">
+                      <TableRow key={movimentacao.id} className="hover:bg-muted/50 dark:hover:bg-muted/20">
                         <TableCell className="font-medium">
                           {format(new Date(movimentacao.data_movimentacao), "dd/MM/yyyy HH:mm")}
                         </TableCell>
