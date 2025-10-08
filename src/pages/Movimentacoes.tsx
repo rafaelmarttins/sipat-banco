@@ -51,36 +51,36 @@ const Movimentacoes = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardContent className="flex items-center p-6">
-              <div className="rounded-full p-3 bg-blue-100 mr-4">
-                <ArrowRightLeft className="w-6 h-6 text-blue-600" />
+              <div className="rounded-full p-3 bg-blue-100 dark:bg-blue-950/50 mr-4">
+                <ArrowRightLeft className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-600">Total de Movimentações</p>
-                <p className="text-2xl font-bold text-slate-800">{totalMovimentacoes}</p>
+                <p className="text-sm font-medium text-muted-foreground dark:text-white/70">Total de Movimentações</p>
+                <p className="text-2xl font-bold text-foreground dark:text-white">{totalMovimentacoes}</p>
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="flex items-center p-6">
-              <div className="rounded-full p-3 bg-green-100 mr-4">
-                <Calendar className="w-6 h-6 text-green-600" />
+              <div className="rounded-full p-3 bg-green-100 dark:bg-green-950/50 mr-4">
+                <Calendar className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-600">Este Mês</p>
-                <p className="text-2xl font-bold text-slate-800">{movimentacoesEsteMes}</p>
+                <p className="text-sm font-medium text-muted-foreground dark:text-white/70">Este Mês</p>
+                <p className="text-2xl font-bold text-foreground dark:text-white">{movimentacoesEsteMes}</p>
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="flex items-center p-6">
-              <div className="rounded-full p-3 bg-purple-100 mr-4">
-                <User className="w-6 h-6 text-purple-600" />
+              <div className="rounded-full p-3 bg-purple-100 dark:bg-purple-950/50 mr-4">
+                <User className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-600">Setores Envolvidos</p>
-                <p className="text-2xl font-bold text-slate-800">{setoresUnicos}</p>
+                <p className="text-sm font-medium text-muted-foreground dark:text-white/70">Setores Envolvidos</p>
+                <p className="text-2xl font-bold text-foreground dark:text-white">{setoresUnicos}</p>
               </div>
             </CardContent>
           </Card>
