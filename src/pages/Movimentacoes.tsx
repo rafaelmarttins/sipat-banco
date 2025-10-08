@@ -43,8 +43,8 @@ const Movimentacoes = () => {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Movimentações</h1>
-          <p className="text-slate-600">Histórico de movimentações entre setores</p>
+          <h1 className="text-3xl font-bold text-foreground">Movimentações</h1>
+          <p className="text-muted-foreground dark:text-white/90">Histórico de movimentações entre setores</p>
         </div>
 
         {/* Estatísticas */}

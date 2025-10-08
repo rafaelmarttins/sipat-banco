@@ -132,8 +132,8 @@ const Patrimonio = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">Patrimônio</h1>
-            <p className="text-slate-600">Gestão de equipamentos de informática</p>
+            <h1 className="text-3xl font-bold text-foreground">Patrimônio</h1>
+            <p className="text-muted-foreground dark:text-white/90">Gestão de equipamentos de informática</p>
           </div>
           {isAdmin && (
             <Button 

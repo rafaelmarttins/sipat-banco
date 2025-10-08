@@ -13,8 +13,8 @@ const Estatisticas = () => {
               <BarChart3 className="w-12 h-12 text-slate-400" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-800 mb-4">Estatísticas do Sistema</h1>
-          <p className="text-lg text-slate-600 mb-6">
+          <h1 className="text-3xl font-bold text-foreground mb-4">Estatísticas do Sistema</h1>
+          <p className="text-lg text-muted-foreground dark:text-white/90 mb-6">
             Este módulo está em desenvolvimento e estará disponível em breve.
           </p>
           <Card className="max-w-md mx-auto">
@@ -25,10 +25,10 @@ const Estatisticas = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-slate-600">
+              <p className="text-muted-foreground dark:text-white/80">
                 Funcionalidades que estarão disponíveis:
               </p>
-              <ul className="mt-4 text-sm text-slate-500 space-y-1">
+              <ul className="mt-4 text-sm text-muted-foreground dark:text-white/70 space-y-1">
                 <li>• Gráficos de patrimônio</li>
                 <li>• Estatísticas por setor</li>
                 <li>• Análise de movimentações</li>

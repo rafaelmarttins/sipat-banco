@@ -146,8 +146,8 @@ const Usuarios = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">Gerenciamento de Usuários</h1>
-            <p className="text-slate-600 mt-2">Criar e gerenciar usuários do sistema</p>
+            <h1 className="text-3xl font-bold text-foreground">Gerenciamento de Usuários</h1>
+            <p className="text-muted-foreground dark:text-white/90 mt-2">Criar e gerenciar usuários do sistema</p>
           </div>
           <Button 
             onClick={() => setShowForm(!showForm)}
