@@ -100,6 +100,23 @@ const Sidebar: React.FC<SidebarProps> = ({
         isCollapsed ? "w-16" : "w-60"
       )}
     >
+      {/* Logo clicável */}
+      <a 
+        href="/dashboard" 
+        className="flex items-center gap-3 p-4 mb-2 hover:opacity-80 transition-opacity cursor-pointer"
+        title="Ir para Dashboard"
+      >
+        <div className="w-10 h-10 bg-green-600 rounded flex items-center justify-center flex-shrink-0">
+          <Computer className="w-5 h-5 text-white" />
+        </div>
+        {!isCollapsed && (
+          <div>
+            <h1 className="text-lg font-bold text-sidebar-foreground">SIPAT</h1>
+            <p className="text-xs text-sidebar-foreground/60">Sistema de Patrimônio</p>
+          </div>
+        )}
+      </a>
+
       {/* Botão de toggle */}
       <div className="absolute top-24 -right-3 z-10">
         <Button
