@@ -46,10 +46,10 @@ const Auth = () => {
           <div className="w-16 h-16 bg-green-600 rounded flex items-center justify-center mx-auto mb-4">
             <Computer className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold text-slate-800">
+          <CardTitle className="text-2xl font-bold text-foreground dark:text-white">
             SIPAT
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center dark:text-white/90">
             Sistema de Patrimônio
             <br />
             Município de Chapadão do Sul - MS
