@@ -148,7 +148,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               variant="ghost"
               onClick={logout}
               className={cn(
-                "w-full h-12 text-destructive hover:bg-destructive/10 rounded-xl transition-all duration-200",
+                "w-full h-12 text-destructive dark:text-red-400 hover:bg-destructive/10 dark:hover:bg-red-500/20 rounded-xl transition-all duration-200",
                 isCollapsed ? "justify-center px-2" : "justify-start px-4"
               )}
               title={isCollapsed ? 'Sair' : undefined}
