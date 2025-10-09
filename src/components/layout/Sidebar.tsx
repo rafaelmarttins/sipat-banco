@@ -126,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Área inferior com Ajuda e Log out */}
         <div className="p-3 mt-auto space-y-2">
-          <div className="bg-muted/10 dark:bg-muted/20 rounded-2xl p-3 space-y-2 border border-border/40 dark:border-border/60">
+          <div className="bg-muted/10 dark:bg-muted/20 rounded-2xl p-3 space-y-2 border border-transparent dark:border-border/60">
             <Button
               variant="ghost"
               asChild
