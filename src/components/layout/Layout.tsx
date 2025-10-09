@@ -30,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </span>
                 </div>
                 <span className="hidden md:inline">•</span>
-                <span>© 2025 CEGIT • Diretoria de Tecnologia</span>
+                <span>© 2025 CEGIT • Diretoria de Tecnologia • Prefeitura de Chapadão do Sul - Uma cidade bem melhor</span>
               </div>
               
               <div className="flex items-center gap-3 text-sm">
