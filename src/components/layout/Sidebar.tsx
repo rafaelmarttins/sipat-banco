@@ -106,11 +106,11 @@ const Sidebar: React.FC<SidebarProps> = ({
           variant="outline"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="h-6 w-6 rounded-full bg-primary border-0 shadow-lg hover:bg-primary/90 transition-all duration-200"
+          className="h-6 w-6 rounded-full bg-primary dark:bg-primary/90 border-2 border-background dark:border-border shadow-lg hover:bg-primary/90 dark:hover:bg-primary transition-all duration-200"
         >
           <ChevronRight 
             className={cn(
-              "h-3 w-3 transition-transform duration-300 text-white",
+              "h-3 w-3 transition-transform duration-300 text-primary-foreground",
               !isCollapsed ? "rotate-180" : ""
             )} 
           />
