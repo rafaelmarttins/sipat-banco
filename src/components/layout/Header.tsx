@@ -125,7 +125,14 @@ const Header = () => {
       <header className="h-20 border-b border-border flex flex-col justify-center px-6 shadow-sm backdrop-blur-xl bg-card/95 sticky top-0 z-50">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-3 group">
+          <a 
+            href="/dashboard" 
+            className="flex items-center space-x-3 group cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavigate('/dashboard');
+            }}
+          >
             <div className="bg-gradient-emerald p-3 rounded-2xl shadow-emerald hover-scale transition-all duration-300">
               <Building2 className="h-6 w-6 text-white" />
             </div>
@@ -135,7 +142,7 @@ const Header = () => {
               </h1>
               <p className="text-xs text-muted-foreground">Sistema de Patrimônio</p>
             </div>
-          </div>
+          </a>
 
           {/* Navegação principal centralizada - Desktop */}
           <nav className="hidden lg:flex items-center space-x-2 flex-1 justify-center">
