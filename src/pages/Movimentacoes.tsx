@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowRightLeft, Plus, Calendar, User } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { useMovimentacoes } from '@/hooks/useMovimentacoes';
@@ -116,80 +117,91 @@ const Movimentacoes = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Equipamento</TableHead>
-                    <TableHead>Patrimônio</TableHead>
-                    <TableHead>Localização</TableHead>
-                    <TableHead>Secretaria</TableHead>
-                    <TableHead>Responsável</TableHead>
-                    <TableHead>Motivo</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
+            <TooltipProvider>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-slate-500">
-                        Carregando movimentações...
-                      </TableCell>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Equipamento</TableHead>
+                      <TableHead>Patrimônio</TableHead>
+                      <TableHead>Localização</TableHead>
+                      <TableHead>Secretaria</TableHead>
+                      <TableHead>Responsável</TableHead>
+                      <TableHead>Motivo</TableHead>
                     </TableRow>
-                  ) : filteredMovimentacoes.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-slate-500">
-                        Nenhuma movimentação encontrada
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredMovimentacoes.map((movimentacao) => (
-                      <TableRow key={movimentacao.id} className="hover:bg-muted/50 dark:hover:bg-muted/20">
-                        <TableCell className="font-medium">
-                          {format(new Date(movimentacao.data_movimentacao), "dd/MM/yyyy HH:mm")}
-                        </TableCell>
-                        <TableCell>{movimentacao.equipamento?.modelo || 'N/A'}</TableCell>
-                        <TableCell className="font-mono text-blue-600">
-                          #{movimentacao.equipamento?.patrimonio || 'N/A'}
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-red-600 border-red-600">
-                                {movimentacao.localizacao_origem?.nome || 'N/A'}
-                              </Badge>
-                              <span className="text-xs text-slate-500">→</span>
-                              <Badge className="bg-green-600 hover:bg-green-700">
-                                {movimentacao.localizacao_destino?.nome || 'N/A'}
-                              </Badge>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            {(movimentacao.secretaria_origem?.nome || movimentacao.secretaria_destino?.nome) && (
-                              <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-orange-600 border-orange-600">
-                                  {movimentacao.secretaria_origem?.nome || 'N/A'}
-                                </Badge>
-                                <span className="text-xs text-slate-500">→</span>
-                                <Badge className="bg-orange-600 hover:bg-orange-700">
-                                  {movimentacao.secretaria_destino?.nome || 'N/A'}
-                                </Badge>
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>{movimentacao.responsavel?.nome || 'N/A'}</TableCell>
-                        <TableCell className="max-w-xs truncate">
-                          {movimentacao.motivo}
+                  </TableHeader>
+                  <TableBody>
+                    {loading ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-8 text-slate-500">
+                          Carregando movimentações...
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                    ) : filteredMovimentacoes.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-8 text-slate-500">
+                          Nenhuma movimentação encontrada
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      filteredMovimentacoes.map((movimentacao) => (
+                        <TableRow key={movimentacao.id} className="hover:bg-muted/50 dark:hover:bg-muted/20">
+                          <TableCell className="font-medium">
+                            {format(new Date(movimentacao.data_movimentacao), "dd/MM/yyyy HH:mm")}
+                          </TableCell>
+                          <TableCell>{movimentacao.equipamento?.modelo || 'N/A'}</TableCell>
+                          <TableCell className="font-mono text-blue-600">
+                            #{movimentacao.equipamento?.patrimonio || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-red-600 border-red-600">
+                                  {movimentacao.localizacao_origem?.nome || 'N/A'}
+                                </Badge>
+                                <span className="text-xs text-slate-500">→</span>
+                                <Badge className="bg-green-600 hover:bg-green-700">
+                                  {movimentacao.localizacao_destino?.nome || 'N/A'}
+                                </Badge>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              {(movimentacao.secretaria_origem?.nome || movimentacao.secretaria_destino?.nome) && (
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="outline" className="text-orange-600 border-orange-600">
+                                    {movimentacao.secretaria_origem?.nome || 'N/A'}
+                                  </Badge>
+                                  <span className="text-xs text-slate-500">→</span>
+                                  <Badge className="bg-orange-600 hover:bg-orange-700">
+                                    {movimentacao.secretaria_destino?.nome || 'N/A'}
+                                  </Badge>
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>{movimentacao.responsavel?.nome || 'N/A'}</TableCell>
+                          <TableCell className="max-w-xs">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="truncate cursor-help">
+                                  {movimentacao.motivo}
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-md">
+                                <p>{movimentacao.motivo}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </TooltipProvider>
           </CardContent>
         </Card>
       </div>
