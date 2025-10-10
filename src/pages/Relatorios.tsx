@@ -146,8 +146,8 @@ const Relatorios = () => {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Relatórios</h1>
-          <p className="text-slate-600">Gere relatórios detalhados em PDF ou XLSX</p>
+          <h1 className="text-3xl font-bold text-foreground">Relatórios</h1>
+          <p className="text-muted-foreground">Gere relatórios detalhados em PDF ou XLSX</p>
         </div>
 
         {/* Estatísticas rápidas */}
@@ -159,8 +159,8 @@ const Relatorios = () => {
                   <Monitor className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Equipamentos</p>
-                  <p className="text-xl font-bold text-slate-800">{equipamentos.length}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Equipamentos</p>
+                  <p className="text-xl font-bold text-foreground">{equipamentos.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -173,8 +173,8 @@ const Relatorios = () => {
                   <ArrowRightLeft className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Movimentações</p>
-                  <p className="text-xl font-bold text-slate-800">{movimentacoes.length}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Movimentações</p>
+                  <p className="text-xl font-bold text-foreground">{movimentacoes.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -187,8 +187,8 @@ const Relatorios = () => {
                   <Users className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Usuários</p>
-                  <p className="text-xl font-bold text-slate-800">{usuarios.length}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Usuários</p>
+                  <p className="text-xl font-bold text-foreground">{usuarios.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -201,8 +201,8 @@ const Relatorios = () => {
                   <MapPin className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Localizações</p>
-                  <p className="text-xl font-bold text-slate-800">{localizacoes.length}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Localizações</p>
+                  <p className="text-xl font-bold text-foreground">{localizacoes.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -259,7 +259,7 @@ const Relatorios = () => {
               
               {/* Filtros de Data */}
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-slate-700 mb-3">Período</h4>
+                <h4 className="text-sm font-medium text-foreground mb-3">Período</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Data Início</Label>
@@ -317,7 +317,7 @@ const Relatorios = () => {
 
               {/* Filtros por Categoria */}
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-slate-700 mb-3">Filtros por Categoria</h4>
+                <h4 className="text-sm font-medium text-foreground mb-3">Filtros por Categoria</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Filtro de Localização */}
                   {(tipoRelatorio === 'equipamentos' || tipoRelatorio === 'usuarios') && (
@@ -380,31 +380,31 @@ const Relatorios = () => {
 
               {/* Filtros Ativos */}
               {(dataInicio || dataFim || filtroLocalizacao !== 'all' || filtroSecretaria !== 'all' || filtroStatus !== 'all') && (
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="text-sm font-medium text-blue-900 mb-2">Filtros Aplicados:</h4>
+                <div className="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Filtros Aplicados:</h4>
                   <div className="flex flex-wrap gap-2">
                     {dataInicio && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-100">
                         Início: {format(dataInicio, "dd/MM/yyyy")}
                       </span>
                     )}
                     {dataFim && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-100">
                         Fim: {format(dataFim, "dd/MM/yyyy")}
                       </span>
                     )}
                     {filtroLocalizacao !== 'all' && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-100">
                         Localização: {localizacoes.find(l => l.id === filtroLocalizacao)?.nome}
                       </span>
                     )}
                     {filtroSecretaria !== 'all' && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-100">
                         Secretaria: {secretarias.find(s => s.id === filtroSecretaria)?.nome}
                       </span>
                     )}
                     {filtroStatus !== 'all' && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-100">
                         Status: {filtroStatus}
                       </span>
                     )}
@@ -416,14 +416,14 @@ const Relatorios = () => {
             <Separator />
 
             {/* Preview e Geração */}
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
               <div className="flex items-center space-x-3">
                 {getTipoRelatorioIcon()}
                 <div>
-                  <p className="font-medium">
+                  <p className="font-medium text-foreground">
                     Relatório de {tipoRelatorio.charAt(0).toUpperCase() + tipoRelatorio.slice(1)}
                   </p>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-muted-foreground">
                     {getContadorDados()} registros • Formato {formato.toUpperCase()}
                   </p>
                 </div>
