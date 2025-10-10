@@ -9,11 +9,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Search, Filter, Plus, Computer, Monitor, Printer, CalendarIcon, Eye, Edit, Trash2, Laptop } from 'lucide-react';
+import { Search, Filter, Plus, Computer, Monitor, Printer, CalendarIcon, Eye, Edit, Trash2, Laptop, ArrowRightLeft } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import EquipamentoForm from '@/components/forms/EquipamentoForm';
 import EquipamentoDetailsModal from '@/components/modals/EquipamentoDetailsModal';
 import EditEquipamentoModal from '@/components/modals/EditEquipamentoModal';
+import TransferenciaModal from '@/components/modals/TransferenciaModal';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
@@ -33,6 +34,7 @@ const Patrimonio = () => {
   const [selectedEquipamento, setSelectedEquipamento] = useState<Equipamento | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isTransferenciaModalOpen, setIsTransferenciaModalOpen] = useState(false);
 
   const isAdmin = profile?.role === 'admin';
 
@@ -87,6 +89,15 @@ const Patrimonio = () => {
   const handleEditClick = (equipamento: Equipamento) => {
     setSelectedEquipamento(equipamento);
     setIsEditModalOpen(true);
+  };
+
+  const handleTransferenciaClick = (equipamento: Equipamento) => {
+    setSelectedEquipamento(equipamento);
+    setIsTransferenciaModalOpen(true);
+  };
+
+  const handleTransferenciaSuccess = () => {
+    fetchEquipamentos();
   };
 
   const getEstadoBadge = (estado: string) => {
@@ -321,6 +332,14 @@ const Patrimonio = () => {
                             >
                               <Eye className="w-4 h-4" />
                             </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleTransferenciaClick(equipamento)}
+                              title="Transferir equipamento"
+                            >
+                              <ArrowRightLeft className="w-4 h-4" />
+                            </Button>
                             {isAdmin && (
                               <>
                                 <Button 
@@ -395,6 +414,13 @@ const Patrimonio = () => {
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         onSubmit={handleEditEquipamento}
+      />
+
+      <TransferenciaModal
+        equipamento={selectedEquipamento as any}
+        open={isTransferenciaModalOpen}
+        onOpenChange={setIsTransferenciaModalOpen}
+        onSuccess={handleTransferenciaSuccess}
       />
     </Layout>
   );
