@@ -235,7 +235,7 @@ const Header = () => {
                   </Tooltip>
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-96 glass backdrop-blur-xl border-muted shadow-large z-50">
+              <DropdownMenuContent align="end" className="w-96 bg-popover border-border shadow-large z-50">
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-lg text-foreground">Avisos Importantes</h3>
@@ -325,7 +325,7 @@ const Header = () => {
                   </Tooltip>
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-96 glass backdrop-blur-xl border-muted shadow-large z-50">
+              <DropdownMenuContent align="end" className="w-96 bg-popover border-border shadow-large z-50">
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-lg text-foreground">Notificações</h3>
@@ -448,7 +448,7 @@ const Header = () => {
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-background rounded-full"></div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80 glass backdrop-blur-xl border-muted shadow-large z-50">
+              <DropdownMenuContent align="end" className="w-80 bg-popover border-border shadow-large z-50">
                 <div className="p-4 border-b border-muted">
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-12 w-12 flex-shrink-0">
