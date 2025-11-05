@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -35,6 +36,8 @@ const Patrimonio = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTransferenciaModalOpen, setIsTransferenciaModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
   const isAdmin = profile?.role === 'admin';
 
@@ -58,6 +61,17 @@ const Patrimonio = () => {
     return matchSearch && matchTipo && matchEstado && matchStatus && matchDataInicio && matchDataFim;
   });
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredEquipamentos.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedEquipamentos = filteredEquipamentos.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterTipo, filterEstado, filterStatus, dataInicio, dataFim]);
+
   const handleAddEquipamento = async () => {
     await fetchEquipamentos();
     setIsFormOpen(false);
@@ -79,6 +93,7 @@ const Patrimonio = () => {
     setFilterStatus('all');
     setDataInicio(undefined);
     setDataFim(undefined);
+    setCurrentPage(1);
   };
 
   const handleViewEquipamento = (equipamento: Equipamento) => {
@@ -271,7 +286,7 @@ const Patrimonio = () => {
           <CardHeader>
             <CardTitle>Equipamentos Cadastrados</CardTitle>
             <CardDescription>
-              {loading ? 'Carregando...' : `${filteredEquipamentos.length} equipamentos encontrados`}
+              {loading ? 'Carregando...' : `${filteredEquipamentos.length} equipamentos encontrados${filteredEquipamentos.length > itemsPerPage ? ` - Página ${currentPage} de ${totalPages}` : ''}`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -305,7 +320,7 @@ const Patrimonio = () => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredEquipamentos.map((equipamento) => (
+                    paginatedEquipamentos.map((equipamento) => (
                       <TableRow key={equipamento.id} className="hover:bg-muted/50 dark:hover:bg-muted/20">
                         <TableCell className="font-mono text-blue-600 font-bold">
                           #{equipamento.patrimonio}
@@ -393,6 +408,57 @@ const Patrimonio = () => {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Paginação */}
+            {filteredEquipamentos.length > itemsPerPage && (
+              <div className="mt-6 flex justify-center">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                      // Show first page, last page, current page, and pages around current
+                      if (
+                        page === 1 ||
+                        page === totalPages ||
+                        (page >= currentPage - 1 && page <= currentPage + 1)
+                      ) {
+                        return (
+                          <PaginationItem key={page}>
+                            <PaginationLink
+                              onClick={() => setCurrentPage(page)}
+                              isActive={currentPage === page}
+                              className="cursor-pointer"
+                            >
+                              {page}
+                            </PaginationLink>
+                          </PaginationItem>
+                        );
+                      } else if (page === currentPage - 2 || page === currentPage + 2) {
+                        return (
+                          <PaginationItem key={page}>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                        );
+                      }
+                      return null;
+                    })}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
