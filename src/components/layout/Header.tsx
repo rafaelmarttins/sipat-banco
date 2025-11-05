@@ -238,7 +238,7 @@ const Header = () => {
               <DropdownMenuContent align="end" className="w-96 glass backdrop-blur-xl border-muted shadow-large z-50">
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-lg">Avisos Importantes</h3>
+                    <h3 className="font-semibold text-lg text-foreground">Avisos Importantes</h3>
                     {alerts.length > 0 && (
                       <Badge variant="secondary" className="rounded-full">{alerts.length}</Badge>
                     )}
@@ -328,7 +328,7 @@ const Header = () => {
               <DropdownMenuContent align="end" className="w-96 glass backdrop-blur-xl border-muted shadow-large z-50">
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-lg">Notificações</h3>
+                    <h3 className="font-semibold text-lg text-foreground">Notificações</h3>
                     <div className="flex items-center gap-2">
                       {unreadCount > 0 && (
                         <Badge variant="secondary" className="rounded-full">{unreadCount} nova{unreadCount > 1 ? 's' : ''}</Badge>
