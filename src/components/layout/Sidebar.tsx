@@ -23,6 +23,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const { profile, logout } = useAuth();
 
+  const isAdmin = profile?.role === 'admin';
+
   const menuSections = [
     {
       title: 'PRINCIPAL',
@@ -35,14 +37,14 @@ const Sidebar: React.FC<SidebarProps> = ({
       items: [
         { icon: Computer, label: 'Patrimônio', path: '/patrimonio' },
         { icon: ArrowRightLeft, label: 'Movimentações', path: '/movimentacoes' },
-        { icon: MapPin, label: 'Localizações', path: '/localizacoes' },
+        ...(isAdmin ? [{ icon: MapPin, label: 'Localizações', path: '/localizacoes' }] : []),
         { icon: FileText, label: 'Relatórios', path: '/relatorios' }
       ]
     }
   ];
 
   // Adiciona seção SISTEMA apenas para admins
-  if (profile?.role === 'admin') {
+  if (isAdmin) {
     menuSections.push({
       title: 'SISTEMA',
       items: [
