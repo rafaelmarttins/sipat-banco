@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "next-themes";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminRoute from "@/components/AdminRoute";
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
 import Patrimonio from "@/pages/Patrimonio";
@@ -59,9 +60,9 @@ const App = () => (
             <Route 
               path="/localizacoes" 
               element={
-                <ProtectedRoute>
+                <AdminRoute>
                   <Localizacoes />
-                </ProtectedRoute>
+                </AdminRoute>
               } 
             />
             <Route 
