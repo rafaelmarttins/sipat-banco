@@ -32,9 +32,10 @@ export interface UserProfile {
   id: string;
   nome: string;
   email: string;
-  role: 'admin' | 'user';
+  role?: 'admin' | 'user'; // Fetched from user_roles table separately
   setor: string;
   localizacao_id?: string;
+  secretaria_id?: string;
   created_at?: string;
   updated_at?: string;
 }
