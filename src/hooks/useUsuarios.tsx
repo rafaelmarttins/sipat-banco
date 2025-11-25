@@ -33,14 +33,32 @@ export const useUsuarios = () => {
       }
 
       console.log('Fetching usuarios for admin user:', profile);
-      const { data, error } = await supabase
+      
+      // Fetch profiles
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      console.log('Usuarios fetched:', data);
-      setUsuarios(data as Usuario[] || []);
+      if (profilesError) throw profilesError;
+      
+      // Fetch all user roles
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+
+      if (rolesError) throw rolesError;
+      
+      // Map roles to profiles
+      const rolesMap = new Map(rolesData?.map(r => [r.user_id, r.role]) || []);
+      
+      const usuarios = profilesData?.map(profile => ({
+        ...profile,
+        role: rolesMap.get(profile.id) || 'user'
+      })) as Usuario[] || [];
+      
+      console.log('Usuarios fetched:', usuarios);
+      setUsuarios(usuarios);
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
       toast({
@@ -59,22 +77,44 @@ export const useUsuarios = () => {
         throw new Error('Acesso negado. Apenas administradores podem editar usuários.');
       }
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
+      // Separate role from other updates
+      const { role, ...profileUpdates } = updates;
+      
+      // Update profile data (excluding role)
+      if (Object.keys(profileUpdates).length > 0) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update(profileUpdates)
+          .eq('id', id);
 
-      if (error) throw error;
-
-      setUsuarios(prev => prev.map(user => user.id === id ? data as Usuario : user));
+        if (profileError) throw profileError;
+      }
+      
+      // Update role in user_roles table if provided
+      if (role !== undefined) {
+        // First, delete existing role
+        await supabase
+          .from('user_roles')
+          .delete()
+          .eq('user_id', id);
+        
+        // Then insert new role
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({ user_id: id, role: role });
+        
+        if (roleError) throw roleError;
+      }
+      
+      // Fetch updated user data
+      await fetchUsuarios();
+      
       toast({
         title: "Sucesso",
         description: "Usuário atualizado com sucesso.",
       });
       
-      return { success: true, data };
+      return { success: true };
     } catch (error: any) {
       console.error('Erro ao atualizar usuário:', error);
       toast({
