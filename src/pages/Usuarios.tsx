@@ -60,26 +60,27 @@ const Usuarios = () => {
     setIsCreating(true);
 
     try {
-      // Usar signup normal do Supabase
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            nome: formData.nome,
-            setor: formData.setor,
-            localizacao: formData.localizacao,
-            role: formData.role
-          }
+      // Usar edge function para criar usuário como admin (com service role)
+      const { data, error } = await supabase.functions.invoke('create-user', {
+        body: {
+          email: formData.email,
+          password: formData.password,
+          nome: formData.nome,
+          setor: formData.setor,
+          localizacao: formData.localizacao || null,
+          role: formData.role
         }
       });
 
-      if (authError) {
-        throw authError;
+      if (error) {
+        throw error;
       }
 
-      toast.success("Usuário criado com sucesso! O usuário deve verificar o email para ativar a conta.");
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      toast.success("Usuário criado com sucesso!");
       setFormData({ nome: '', email: '', setor: '', localizacao: '', role: 'user', password: '' });
       setShowForm(false);
       // Recarregar lista de usuários após um delay para permitir que o trigger processe
@@ -295,9 +296,9 @@ const Usuarios = () => {
                 
                 <div className="text-sm text-slate-500 mt-4 p-3 bg-blue-50 rounded-lg">
                   <p><strong>Como funciona:</strong></p>
-                  <p>• O usuário receberá um email de confirmação para ativar a conta</p>
-                  <p>• Após confirmar o email, ele poderá fazer login com a senha temporária</p>
-                  <p>• Recomende que o usuário altere a senha no perfil após o primeiro login</p>
+                  <p>• O usuário será criado imediatamente com a senha temporária</p>
+                  <p>• No primeiro login, ele será obrigado a alterar a senha</p>
+                  <p>• Após alterar a senha, terá acesso normal ao sistema</p>
                 </div>
               </form>
             </CardContent>
