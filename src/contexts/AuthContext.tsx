@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { UserProfile } from '@/types/patrimonio';
-import ForcePasswordChangeModal from '@/components/modals/ForcePasswordChangeModal';
 
 interface AuthContextType {
   user: User | null;
@@ -12,6 +11,8 @@ interface AuthContextType {
   signup: (email: string, password: string, userData: { nome: string; setor: string }) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
+  passwordResetRequired: boolean;
+  clearPasswordResetRequired: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,7 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
+  const [passwordResetRequired, setPasswordResetRequired] = useState(false);
 
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -65,15 +66,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Check if password reset is required
       if (userProfile.password_reset_required) {
-        setShowPasswordChangeModal(true);
+        setPasswordResetRequired(true);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
   };
 
-  const handlePasswordChanged = async () => {
-    setShowPasswordChangeModal(false);
+  const clearPasswordResetRequired = async () => {
+    setPasswordResetRequired(false);
     // Refresh profile to update password_reset_required status
     if (user) {
       await fetchUserProfile(user.id);
@@ -94,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }, 0);
         } else {
           setProfile(null);
-          setShowPasswordChangeModal(false);
+          setPasswordResetRequired(false);
         }
         
         setIsLoading(false);
@@ -175,7 +176,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setProfile(null);
       setSession(null);
-      setShowPasswordChangeModal(false);
+      setPasswordResetRequired(false);
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -189,16 +190,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       login, 
       signup, 
       logout, 
-      isLoading 
+      isLoading,
+      passwordResetRequired,
+      clearPasswordResetRequired
     }}>
       {children}
-      {user && showPasswordChangeModal && (
-        <ForcePasswordChangeModal
-          open={showPasswordChangeModal}
-          userId={user.id}
-          onPasswordChanged={handlePasswordChanged}
-        />
-      )}
     </AuthContext.Provider>
   );
 };
