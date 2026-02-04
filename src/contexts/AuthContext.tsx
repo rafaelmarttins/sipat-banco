@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { UserProfile } from '@/types/patrimonio';
+import ForcePasswordChangeModal from '@/components/modals/ForcePasswordChangeModal';
 
 interface AuthContextType {
   user: User | null;
@@ -28,11 +29,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      console.log('Fetching profile for user:', userId);
-      
       // Fetch profile data
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
@@ -52,19 +52,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('user_id', userId)
         .single();
 
-      if (roleError && roleError.code !== 'PGRST116') { // Ignore "no rows" error
+      if (roleError && roleError.code !== 'PGRST116') {
         console.error('Error fetching role:', roleError);
       }
       
-      const profile = {
+      const userProfile = {
         ...profileData,
         role: roleData?.role || 'user'
       } as UserProfile;
       
-      console.log('Profile fetched:', profile);
-      setProfile(profile);
+      setProfile(userProfile);
+      
+      // Check if password reset is required
+      if (userProfile.password_reset_required) {
+        setShowPasswordChangeModal(true);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
+    }
+  };
+
+  const handlePasswordChanged = async () => {
+    setShowPasswordChangeModal(false);
+    // Refresh profile to update password_reset_required status
+    if (user) {
+      await fetchUserProfile(user.id);
     }
   };
 
@@ -82,6 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }, 0);
         } else {
           setProfile(null);
+          setShowPasswordChangeModal(false);
         }
         
         setIsLoading(false);
@@ -162,6 +175,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setProfile(null);
       setSession(null);
+      setShowPasswordChangeModal(false);
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -178,6 +192,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isLoading 
     }}>
       {children}
+      {user && showPasswordChangeModal && (
+        <ForcePasswordChangeModal
+          open={showPasswordChangeModal}
+          userId={user.id}
+          onPasswordChanged={handlePasswordChanged}
+        />
+      )}
     </AuthContext.Provider>
   );
 };
